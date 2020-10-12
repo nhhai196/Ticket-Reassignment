@@ -1,11 +1,17 @@
 
 I. Data structures
+1. Tuple: Contract(family, bundle, price)
+2. 
 
 II. Main functions:
 	1. Scarf Pivoting:
-		a.  Cardinal Pivoting
+		a.  Cardinal Pivoting: take a basis j_1, j_2, ..., j_n and j* 
+		- Input: a list of Contracts (a cardinal basis) and a Contract (pushed in)
+		- Output: a new list of contract (new basis) and a Contract (kicked out) 
 
-		b. Ordinal Pivoting
+		b. Ordinal Pivoting: 
+		- Input: a list of Contracts (an ordinal basis) and a Contract(kicked out)
+		- Ouput: a list of Contracts (new basis) and a Contract (pushed in)
 
 	2. Iterative Rounding
 
