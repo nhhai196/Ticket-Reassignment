@@ -4,11 +4,12 @@ I. Data structures
 II. Main functions:
 	1. Scarf Pivoting:
 		a.  Cardinal Pivoting
-		
+
 		b. Ordinal Pivoting
-		
+
 	2. Iterative Rounding
 	
 III. TODO
 
 
+III. TODO YSL
