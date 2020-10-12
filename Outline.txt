@@ -1,7 +1,11 @@
 
 I. Data structures
-1. Tuple: Contract(family, bundle, price)
-2. 
+	1. Tuple: Contract(family, bundle, price)
+		- Bunbdle and price are vectors of length equal to the number of games
+
+	2. Order of a row over columns:
+		- A game-row:  
+		- A family-row:
 
 II. Main functions:
 	1. Scarf Pivoting:
