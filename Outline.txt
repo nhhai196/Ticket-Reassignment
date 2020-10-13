@@ -1,7 +1,8 @@
 
 I. Data structures
 	1. Tuple: Contract(family, bundle, price)
-		- Bunbdle and price are vectors of length equal to the number of games
+		- Bundle and price are vectors of length equal to the number of games
+		- If family val < 0, the contract corresponds to a slack variable of game or family (-family val)
 
 	2. Order of a row over columns:
 		- A game-row:  
@@ -18,6 +19,8 @@ II. Main functions:
 		- Ouput: a list of Contracts (new basis) and a Contract (pushed in)
 
 	2. Iterative Rounding
+	
+III. TODO
 
 
 III. TODO YSL
