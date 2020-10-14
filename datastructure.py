@@ -72,7 +72,17 @@ def breaktiebundle(a, b):
     
 # for family row    
 def comparefamily(g, a, b):
-
+    sa = isslack(a)
+    sb = isslack(b)
+    
+    if (sa and sb):
+        return (a[0] >= b[0])
+    elif (sa and (not sb)):
+        return False
+    elif ((not sa) and sb):
+        return True
+    else:
+        # TODO
 
 #
 def isslack(c):
