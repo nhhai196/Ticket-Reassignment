@@ -30,7 +30,7 @@ def cardinalpivot(clist, c, A, b):
 	pivotrow = -1 		# this will be the index of the leaving basic variable
 	for row in range(numrows):
 		if (A[row, cindex] > 0.00001):
-			temp = A[row, cindex]/b[row]
+			temp = b[row]/ A[row, cindex]
 			if (temp < minval):
 				minval = temp
 				pivotrow = row
