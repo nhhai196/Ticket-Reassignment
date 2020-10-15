@@ -56,6 +56,6 @@ def cardinalpivot(clist, newc, A, b):
 			# Set it equal to the original value minus a multiple 
 			# of normalized pivotrow
 			newA[k, :] = A[k,:] - A[k,:] * newA[pivotrow, :]
-			newb[k] = b[k] - A[k,cindex] * B[pivotrow]
+			newb[k] = b[k] - A[k,cindex] * b[pivotrow]
 			
 	return (clist, oldc, newA, newb)
