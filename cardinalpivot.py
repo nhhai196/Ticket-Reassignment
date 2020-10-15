@@ -1,29 +1,32 @@
 ######################## Cardinal Pivot ############################
-from numpy import * 
+import numpy
 
-# @clist: 	a list of contracts that is a cardinal basis. Note that 
-#			the order of contracts is important. 
-# @c:	a new column to add to the basis 
-# @A: 		the constraint matrix. Note that this matrix will be updated
-#     		after each cardinal basis step
-# @b: 		the right hand side
+# @clist	: a list of contracts that is a cardinal basis. Note that 
+#				the order of contracts is important. 
+# @c		: a new column to add to the basis 
+# @A 		: the constraint matrix. Note that this matrix will be updated
+#     			after each cardinal basis step
+# @b 		: the right hand side
+# @fb2col	: (family, bundle) to column index (of the constraint matrix)
 
-def cardinalpivot(clist, c, A, b):
+def cardinalpivot(clist, c, A, b, fb2col):
 	# First check that if the contract (ignore the price vector) to add 
 	# already in the basis. If Yes, just add the new contract and remove 
 	# the old one.
 	for i in range(len(clist)):
-		c = clist[i]
-		if (c[0] == c[0] and c[1] == c[1]):
-			clist[i] = c
-			return (clist, c)
-	
+		tempc = clist[i]
+		if (tempc[0] == c[0] and tempc[1] == c[1]):
+			clist[i] = tempc
+			return clist, tempc, A, b
+			
 	numrows = len(A)
 	numcols = len(A[0])
 	
 	# Index of the entering basic variable (added column)
 	# TODO: need a mapping from (family, bundle) to index
-	cindex = getindex(c)
+	fbc = (c[0], c[1])
+	cindex = fb2col[fbc]
+	#print(cindex)
 	
 	# Perform ratio test to find the leaving basic variable (revomed column)
 	minval = 10**10		# some large value
@@ -40,8 +43,8 @@ def cardinalpivot(clist, c, A, b):
 	clist[pivotrow] = c
 	
 	# Initialize to appropriate size
-	newb = numpy.zeros([numrows, 1])
-	newA = numpy.zeros([numrow, numcols])
+	newb = [0] * len(b)
+	newA = numpy.zeros([numrows, numcols])
 	
 	## Update the pivotrow
 	# Copy pivotrow and normalizing to 1
@@ -55,7 +58,7 @@ def cardinalpivot(clist, c, A, b):
 		if (not (k == pivotrow)):
 			# Set it equal to the original value minus a multiple 
 			# of normalized pivotrow
-			newA[k, :] = A[k,:] - A[k,:] * newA[pivotrow, :]
+			newA[k, :] = A[k,:] - A[k,cindex] * newA[pivotrow, :]
 			newb[k] = b[k] - A[k,cindex] * b[pivotrow]
 			
-	return (clist, oldc, newA, newb)
+	return clist, oldc, newA, newb
