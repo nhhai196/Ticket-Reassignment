@@ -83,6 +83,7 @@ def comparefamily(g, a, b):
     elif ((not sa) and sb):
         return True
     else:
+		print("Hello")
         # TODO
 
 # for family row
@@ -92,4 +93,4 @@ def comparefamily(g, a, b):
 
 #
 def isslack(c):
-    return (c[0] < 0)
+	return (c[0] < 0)
