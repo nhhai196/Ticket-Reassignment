@@ -1,7 +1,8 @@
 import sys
 import datastructure
 import csv
-import numpy
+import numpy as np
+import cardinalpivot as cp
 
 #argv[1]: csv file name in the following format
 #row 1: number of families, number of games
@@ -30,3 +31,27 @@ print('budget: ' + str(budget))
 print('capacity: ' + str(capacity))
 print('numcol: ' + str(numcol))
 print('matrix A:\n' + str(A))
+
+
+clist = [] #contract list
+for i in range(numF):
+	clist.append((-1*(i+1),[],[]))
+	
+for i in range(numG):
+	clist.append((-1*(i+1+numF),[],[]))
+	
+print(clist)
+
+c = (0, bundlelist[0][0], [0,0])
+fbc = (c[0], c[1])
+print(fbc)
+
+b = [1 for i in range(3)]
+b = b + capacity
+print(b)	
+
+clist, oldc, newA, newb = cp.cardinalpivot(clist, c, A, b, fb2col)
+print(clist)
+print(oldc)
+print(newA)
+print(newb)
