@@ -70,12 +70,12 @@ def breaktiebundle(a, b):
             return False
 
     print("+++++++ Break tie bundle: ERROR++++++")
-    
-# for family row    
+
+# for family row
 def comparefamily(g, a, b):
     sa = isslack(a)
     sb = isslack(b)
-    
+
     if (sa and sb):
         return (a[0] >= b[0])
     elif (sa and (not sb)):
@@ -83,6 +83,7 @@ def comparefamily(g, a, b):
     elif ((not sa) and sb):
         return True
     else:
+        return True
         # TODO
 
 # for family row
