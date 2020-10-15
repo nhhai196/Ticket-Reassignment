@@ -3,19 +3,19 @@ from numpy import *
 
 # @clist: 	a list of contracts that is a cardinal basis. Note that 
 #			the order of contracts is important. 
-# @newc:	a new column to add to the basis 
+# @c:	a new column to add to the basis 
 # @A: 		the constraint matrix. Note that this matrix will be updated
 #     		after each cardinal basis step
 # @b: 		the right hand side
 
-def cardinalpivot(clist, newc, A, b):
+def cardinalpivot(clist, c, A, b):
 	# First check that if the contract (ignore the price vector) to add 
 	# already in the basis. If Yes, just add the new contract and remove 
 	# the old one.
 	for i in range(len(clist)):
 		c = clist[i]
-		if (c[0] == newc[0] and c[1] == newc[1]):
-			clist[i] = newc
+		if (c[0] == c[0] and c[1] == c[1]):
+			clist[i] = c
 			return (clist, c)
 	
 	numrows = len(A)
@@ -23,7 +23,7 @@ def cardinalpivot(clist, newc, A, b):
 	
 	# Index of the entering basic variable (added column)
 	# TODO: need a mapping from (family, bundle) to index
-	cindex = getindex(newc)
+	cindex = getindex(c)
 	
 	# Perform ratio test to find the leaving basic variable (revomed column)
 	minval = 10**10		# some large value
@@ -37,7 +37,7 @@ def cardinalpivot(clist, newc, A, b):
 				
 	### Update variables
 	oldc = clist[row]
-	clist[row] = newc
+	clist[row] = c
 	
 	# Initialize to appropriate size
 	newb = numpy.zeros([numrows, 1])
