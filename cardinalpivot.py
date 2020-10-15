@@ -36,8 +36,8 @@ def cardinalpivot(clist, c, A, b):
 				pivotrow = row
 				
 	### Update variables
-	oldc = clist[row]
-	clist[row] = c
+	oldc = clist[pivotrow]
+	clist[pivotrow] = c
 	
 	# Initialize to appropriate size
 	newb = numpy.zeros([numrows, 1])
