@@ -34,36 +34,112 @@ import sys
 
 
 # for game row
-def comparegame(g, a, b):
-    sa = isslack(a)
-    sb = isslack(b)
+# g is offset by  + numF
+def gstrictlyprefer(a, b, g, numf):
+	sa = isslack(a)
+	sb = isslack(b)
+	
+	# Check if they are equal
+	if (a == b):
+		return False
+	if (a[0] == -g):		# a is an active slack variable
+		return False
+		
+	elif (b[0] == -g):		# b is an active slack variable
+		return True
+	# both are not active 
+	if (sa and sb):
+		return (a[0] > b[0])
+	elif (sa and (not sb)):
+		return True
+	elif ((not sa) and sb):
+		return False
+	else:					# both are non-slack variable
+		za = iszerocoff(a, row)
+		zb = iszerocoff(b, row)
+		
+		if (za and zb):
+			breaktie(a,b)
+		elif (za and (not zb)):
+			return True
+		elif ((not za) and zb):
+			return False
+		else:				# both are non-zeros
+			if (a[2][g-1] > b[2][g-1]):	# compare price
+				return True
+			elif (a[2][g-1] < b[2][g-1]):
+				return False
+			else: 		# break tie
+				return breaktie(a,b)
 
-    if (sa and sb):
-        return (a[0] >= b[0])
-    elif (sa and (not sb)):
-        return False
-    elif ((not sa) and sb):
-        return True
-    else:
-        if (a[2][g-1] > b[2][g-1]):
-            return True
-        elif (a[2][g-1] < b[2][g-1]):
-            return False
-        else: # break tie
-            breaktie(a,b)
+# for a family row				
+def fstrictlyprefer(a, b, f, fp):
+	sa = isslack(a)
+	sb = isslack(b)
+	
+	# Check if they are equal
+	if (a == b):
+		return False
+	if (a[0] == -g):		# a is an active slack variable
+		return False
+		
+	elif (b[0] == -g):		# b is an active slack variable
+		return True
+	# both are not active 
+	if (sa and sb):
+		return (a[0] > b[0])
+	elif (sa and (not sb)):
+		return True
+	elif ((not sa) and sb):
+		return False
+	else:					# both are non-slack variable
+		za = iszerocoff(a, row)
+		zb = iszerocoff(b, row)
+		
+		if (za and zb):
+			breaktie(a,b)
+		elif (za and (not zb)):
+			return True
+		elif ((not za) and zb):
+			return False
+		else:				# both are non-zeros
+			if (fp[a[0]] < fp[b[0]]):
+				return True
+			elif (fp[a[0]] > fp[b[0]]):
+				return False
+			else:
+				msa = dotproduct(a[1], a[2])	# money spent 
+				msb = dotproduct(b[1], b[1])
+				if (msa > msb):
+					return True
+				elif (msa < msb):
+					return False
+				else:
+					breaktie(a,b)
 
-
+# dot product of two vectors with the same length
+def dotproduct(x, y):
+	sum = 0
+	for i in range(len(x)):
+		sum = sum + x[i] * y[i]
+		
+	return sum
+	
+# Break tie two contracts a and b
 def breaktie(a,b):
-    if (a[0] < b[0]):
-        return True
-    elif (a[0] > b[0]):
-        return False
-    else:
-        return breaktiebundle(a[1], b[1])
-
+	if (a[0] < b[0]):
+		return True
+	elif (a[0] > b[0]):
+		return False
+	else:
+		if (a[1] == b[1]):
+			return breaktievector(a[2], b[2])
+		else:
+			return breaktievector(a[1], b[1])
+ 
 # @a: the first bundle
 # @b: the second bundle
-def breaktiebundle(a, b):
+def breaktievector(a, b):
     n = len(a)
     for i in range(n):
         if (a[i] < b[i]):
@@ -71,28 +147,7 @@ def breaktiebundle(a, b):
         elif (a[i] > b[i]):
             return False
 
-    print("+++++++ Break tie bundle: ERROR++++++")
-
-# for family row
-def comparefamily(g, a, b):
-    sa = isslack(a)
-    sb = isslack(b)
-
-    if (sa and sb):
-        return (a[0] >= b[0])
-    elif (sa and (not sb)):
-        return False
-    elif ((not sa) and sb):
-        return True
-    else:
-        return True
-
-        # TODO
-
-# for family row
-
-#def comparefamily(g, a, b):
-
+    print("+++++++ Break tie: ERROR ++++++")
 
 #
 def isslack(c):
