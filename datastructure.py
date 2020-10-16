@@ -153,6 +153,14 @@ def breaktievector(a, b):
 def isslack(c):
 	return (c[0] < 0)
 
+# for non-slack only
+def iszerocoff(a, row, numf):
+	if (row < numf):
+		return not(a[0] == row)
+	else:
+		return a[1][row - numf] == 0
+	
+#
 def init(str):
 
     bundle2rank = [] #bundle maps to the rank, each family has one dictionary
