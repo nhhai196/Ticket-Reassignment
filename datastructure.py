@@ -32,7 +32,7 @@ import sys
 
 def strictlyprefer(a, b, row, numf, fp):
 	if (row < numf):
-		return fstrictlyprefer(a, b, row, fp)
+		return fstrictlyprefer(a, b, row, numf, fp)
 	else:
 		return gstrictlyprefer(a, b, row, numf)
 	
@@ -76,7 +76,7 @@ def gstrictlyprefer(a, b, g, numf):
 				return breaktie(a,b)
 
 # for a family row				
-def fstrictlyprefer(a, b, f, fp):
+def fstrictlyprefer(a, b, f, numf, fp):
 	sa = isslack(a)
 	sb = isslack(b)
 	
@@ -96,8 +96,8 @@ def fstrictlyprefer(a, b, f, fp):
 	elif ((not sa) and sb):
 		return False
 	else:					# both are non-slack variable
-		za = iszerocoff(a, row)
-		zb = iszerocoff(b, row)
+		za = iszerocoeff(a, row, numf)
+		zb = iszerocoeff(b, row, numf)
 		
 		if (za and zb):
 			breaktie(a,b)
@@ -157,7 +157,7 @@ def isslack(c):
 	return (c[0] < 0)
 
 # for non-slack only
-def iszerocoff(a, row, numf):
+def iszerocoeff(a, row, numf):
 	if (row < numf):
 		return not(a[0] == row)
 	else:
