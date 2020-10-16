@@ -30,9 +30,12 @@ import sys
 # returns YES if the first is more preferred than the second
 # Otherwise returns NO
 
-#def compare(row, a, b):
-
-
+def strictlyprefer(a, b, row, numf, fp):
+	if (row < numf):
+		return fstrictlyprefer(a, b, row, fp)
+	else:
+		return gstrictlyprefer(a, b, row, numf)
+	
 # for game row
 # g is offset by  + numF
 def gstrictlyprefer(a, b, g, numf):
