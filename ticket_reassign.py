@@ -3,6 +3,7 @@ import datastructure
 import csv
 import numpy as np
 import cardinalpivot as cp
+import ordinalpivot as op
 
 #argv[1]: csv file name in the following format
 #row 1: number of families, number of games
@@ -40,9 +41,12 @@ for i in range(numF):
 for i in range(numG):
 	clist.append((-1*(i+1+numF),[],[]))
 	
+print("clist = ")
 print(clist)
 
-c = (0, bundlelist[0][0], [0,0])
+
+# Test cardinal pivot
+c = (1, bundlelist[1][1], [0,0])
 fbc = (c[0], c[1])
 print(fbc)
 
@@ -50,9 +54,26 @@ b = [1 for i in range(3)]
 b = b + capacity
 print(b)	
 
-clist, oldc, newA, newb = cp.cardinalpivot(clist, c, A, b, fb2col)
-print(clist)
+
+newCB, oldc, newA, newb = cp.cardinalpivot(clist, c, A, b, fb2col)
+print(newCB)
 print(oldc)
 print(newA)
 print(newb)
 #a = np.zeros([5 * 10**3, 10**6])
+
+# Test ordinal pivot
+initOB = []
+initOB.append(c)
+for i in range(1, numF+numG):
+	initOB.append((-1*(i+1),[],[]))
+
+
+print("Init ordinal basis:")
+print(initOB)
+
+rmins = op.getallrowmins(initOB, numF, bundle2rank)
+for i in range(len(rmins)):
+	print(rmins[i])
+	
+op.ordinalpivot(initOB, oldc, rmins, numF, bundle2rank)
