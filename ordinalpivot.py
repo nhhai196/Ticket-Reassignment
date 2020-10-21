@@ -1,5 +1,7 @@
 ######################## Ordinal Pivot ############################
 import datastructure as ds
+import copy
+import functools
 
 # @clist	: an ordinal basis
 # @c		: a column that will be added to the basis
@@ -13,20 +15,28 @@ def ordinalpivot(clist, c, rmins, numf, fp):
 	clist.remove(c)
 	
 	# Find row minimizers after removing
-	newrmins, row = getnewrowmins(clist, c, rmins, numf, fp)
+	newrmins, newrm = getnewrowmins(clist, c, rmins, numf, fp)
+	print("New row mins:")
+	for i in range(len(newrmins)):
+		print(newrmins[i])
+	print("The row that has new row min: " + str(newrm))
 	
 	# Find the column with 2 row minimizers, 
-	# and the row containing the old minimizer
-	col2mins, jstar = getcoltwomins(rmins, newrmins)
+	col2mins = getcoltwomins(rmins, newrmins)
+	print("Col with two mins: " + str(col2mins))
 	
-	# Find the column k that maximizes c_{jstar, k}
+	# Find the row containing the old minimizer
+	istar = findoldminimizer(col2mins, rmins)
+	print("Old minimizer istar = " + str(istar))
+	
+	# Find the column k that maximizes c_{istar, k}
 	newc = findcolmax()
 	
 	# Update the basis
-	clist.add(newc)
+	clist.append(newc)
 	
 	# Update row mins of the new basis 
-	newrmins[jstar] = newc
+	newrmins[istar] = newc
 	
 	# Return
 	return clist, newc, newrmins
@@ -34,32 +44,53 @@ def ordinalpivot(clist, c, rmins, numf, fp):
 def	getrowmin(clist, row, numf, fp):
 	rm = clist[0]
 	for i in range(1, len(clist)):
-		if ds.strictlyprefer(rm, clist[i], row, numf, fp)
+		if ds.strictlyprefer(rm, clist[i], row, numf, fp):
 			rm = clist[i]
 			
 	return rm
 
 # When removing one col from the basis, only one row minimizer is changed
 def getnewrowmins(clist, c, rmins, numf, fp):
+	row = None;
+	newrmins = copy.deepcopy(rmins)
 	for i in range(len(rmins)):
 		if (c == rmins[i]):
 			row = i
+			#print("Found new row min" )
 			break
 			
+	#print(row)
 	# Update the min of the row just found above, all others stay the same 
-	rmins(row) = getrowmin(clist, row, numf, fp)
+	newrmins[row] = getrowmin(clist, row, numf, fp)
 	
-	return rmins, row
-		
+	return newrmins, row
+	
+# This fucntion is called only one at the begin
+def getallrowmins(clist, numf, fp):
+	rmins = []
+	for row in range(len(clist)):
+		rmins.append(getrowmin(clist, row, numf, fp))
+	
+	return rmins
 # 
 def getcoltwomins(rmins, newrmins):
+	#print(rmins)
+	#print(newrmins)
 	for i in range(len(rmins)):
-		if (rmins[i] !=  newmins[i]):
-			return newmins[i], i
+		if (rmins[i] !=  newrmins[i]):
+			return newrmins[i]
 		
 	# If not found raise some error
 	print("getcoltwomins: Something went wrong !!!!")
 
+# Find old minimizer
+def findoldminimizer(col2mins, rmins):
+	for i in range(len(rmins)):
+		if (col2mins == rmins[i]):
+			return i
+			
+	print("find old min: Something wen wrong!!!!!")
+	
 # This is the most challenging function to write	
 def findcolmax():
 	# TODO 
@@ -82,14 +113,21 @@ def getcoltype(c, row, numf):
 			return 3
 
 # 
-def getfeasiblecols(row, rmins, ordlist, numf, minprice, mtmoney, fclist):
-	# Update for the row only, others stay the same 
-	fclist[row], minprice, mtmoney = getfeasiblecolsone(row, rmins[row], ordlist[row], numf, minprice, mtmoney, fclist[row])
+def getfeasiblecols(newrm, istar, rmins, ordlist, numf, minprice, mtmoney, fclist):
+	# TODO: Dynamic porgraming
+	# Update for 2 rows only, that is the newrm and istar, others stay the same 
+	#fclist[newrm], minprice, mtmoney = getfeasiblecolsone(newrm, rmins[newrm], ordlist[newrm], numf, minprice, mtmoney, fclist[newrm])
+	
+	#fclist[istar], minprice, mtmoney = getfeasiblecolsone(istar, rmins[istar], ordlist[istar], numf, minprice, mtmoney, fclist[istar])
+	
+	for row in range(len(rmins)):
+		if (i != istar):
+			fclist[row], minprice, mtmoney = getfeasiblecolsone(row, rmins[row], ordlist[row], numf, minprice, mtmoney, fclist[row])
 	
 	# Get the list of  feasible columns by intersecting all the list in fclist
-	#TODO
+	fcols = reduce(intersection, flist)
 	
-	return 
+	return fcols, minprice, mtmoney
 	
 
 #

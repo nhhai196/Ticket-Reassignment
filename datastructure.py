@@ -45,10 +45,10 @@ def gstrictlyprefer(a, b, g, numf):
 	# Check if they are equal
 	if (a == b):
 		return False
-	if (a[0] == -g):		# a is an active slack variable
+	if (a[0] == -g-1):		# a is an active slack variable
 		return False
 		
-	elif (b[0] == -g):		# b is an active slack variable
+	elif (b[0] == -g-1):		# b is an active slack variable
 		return True
 	# both are not active 
 	if (sa and sb):
@@ -68,9 +68,9 @@ def gstrictlyprefer(a, b, g, numf):
 		elif ((not za) and zb):
 			return False
 		else:				# both are non-zeros
-			if (a[2][g-1] > b[2][g-1]):	# compare price
+			if (a[2][g] > b[2][g]):	# compare price
 				return True
-			elif (a[2][g-1] < b[2][g-1]):
+			elif (a[2][g] < b[2][g]):
 				return False
 			else: 		# break tie
 				return breaktie(a,b)
@@ -83,10 +83,10 @@ def fstrictlyprefer(a, b, f, numf, fp):
 	# Check if they are equal
 	if (a == b):
 		return False
-	if (a[0] == -g):		# a is an active slack variable
+	if (a[0] == -f-1):		# a is an active slack variable
 		return False
 		
-	elif (b[0] == -g):		# b is an active slack variable
+	elif (b[0] == -f-1):		# b is an active slack variable
 		return True
 	# both are not active 
 	if (sa and sb):
@@ -112,7 +112,7 @@ def fstrictlyprefer(a, b, f, numf, fp):
 				return False
 			else:
 				msa = dotproduct(a[1], a[2])	# money spent 
-				msb = dotproduct(b[1], b[1])
+				msb = dotproduct(b[1], b[2])
 				if (msa > msb):
 					return True
 				elif (msa < msb):
