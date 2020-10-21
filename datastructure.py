@@ -35,22 +35,22 @@ def strictlyprefer(a, b, row, numf, fp):
 		return fstrictlyprefer(a, b, row, numf, fp)
 	else:
 		return gstrictlyprefer(a, b, row, numf)
-	
+
 # for game row
 # g is offset by  + numF
 def gstrictlyprefer(a, b, g, numf):
 	sa = isslack(a)
 	sb = isslack(b)
-	
+
 	# Check if they are equal
 	if (a == b):
 		return False
 	if (a[0] == -g-1):		# a is an active slack variable
 		return False
-		
+
 	elif (b[0] == -g-1):		# b is an active slack variable
 		return True
-	# both are not active 
+	# both are not active
 	if (sa and sb):
 		return (a[0] > b[0])
 	elif (sa and (not sb)):
@@ -60,7 +60,7 @@ def gstrictlyprefer(a, b, g, numf):
 	else:					# both are non-slack variable
 		za = iszerocoff(a, row)
 		zb = iszerocoff(b, row)
-		
+
 		if (za and zb):
 			breaktie(a,b)
 		elif (za and (not zb)):
@@ -75,20 +75,20 @@ def gstrictlyprefer(a, b, g, numf):
 			else: 		# break tie
 				return breaktie(a,b)
 
-# for a family row				
+# for a family row
 def fstrictlyprefer(a, b, f, numf, fp):
 	sa = isslack(a)
 	sb = isslack(b)
-	
+
 	# Check if they are equal
 	if (a == b):
 		return False
 	if (a[0] == -f-1):		# a is an active slack variable
 		return False
-		
+
 	elif (b[0] == -f-1):		# b is an active slack variable
 		return True
-	# both are not active 
+	# both are not active
 	if (sa and sb):
 		return (a[0] > b[0])
 	elif (sa and (not sb)):
@@ -98,7 +98,7 @@ def fstrictlyprefer(a, b, f, numf, fp):
 	else:					# both are non-slack variable
 		za = iszerocoeff(a, row, numf)
 		zb = iszerocoeff(b, row, numf)
-		
+
 		if (za and zb):
 			breaktie(a,b)
 		elif (za and (not zb)):
@@ -111,7 +111,7 @@ def fstrictlyprefer(a, b, f, numf, fp):
 			elif (fp[a[0]] > fp[b[0]]):
 				return False
 			else:
-				msa = dotproduct(a[1], a[2])	# money spent 
+				msa = dotproduct(a[1], a[2])	# money spent
 				msb = dotproduct(b[1], b[2])
 				if (msa > msb):
 					return True
@@ -125,9 +125,9 @@ def dotproduct(x, y):
 	sum = 0
 	for i in range(len(x)):
 		sum = sum + x[i] * y[i]
-		
+
 	return sum
-	
+
 # Break tie two contracts a and b
 def breaktie(a,b):
 	if (a[0] < b[0]):
@@ -139,7 +139,7 @@ def breaktie(a,b):
 			return breaktievector(a[2], b[2])
 		else:
 			return breaktievector(a[1], b[1])
- 
+
 # @a: the first bundle
 # @b: the second bundle
 def breaktievector(a, b):
@@ -162,7 +162,7 @@ def iszerocoeff(a, row, numf):
 		return not(a[0] == row)
 	else:
 		return a[1][row - numf] == 0
-	
+
 #
 def init(str):
 
@@ -241,3 +241,31 @@ def init(str):
 
     return numF, numG, bundle2rank, bundlelist, fb2col, budget, capacity, numcol, A
 #print(A)
+
+#generate ordlist where ordlist[i] is the preference of row i over the column index w.r.t the C matrix (i is 0-based)
+def genordlist(A, numf, fp, bundlelist, fb2col):
+	ordlist = []
+	for i in range(len(A)):
+		ordlist.append([])
+		#get type 1 columns
+		for j in range(len(A)):
+			if i != j:
+				ordlist[i].append(j)
+
+		#get type 2 columns
+		for j in range(len(A),len(A[i])):
+			if A[i][j]==0:
+				ordlist[i].append(j)
+
+		#get type 3 columns
+		if i < numf: #i is a family row
+			for j in (bundlelist[i]):
+				ordlist[i].append(fb2col[(i,j)])
+		else: #i is a game row
+			for j in range(len(A),len(A[i])):
+				if A[i][j] > 0:
+					ordlist[i].append(j)
+
+		#get type 4 column
+		ordlist[i].append(i)
+	return ordlist

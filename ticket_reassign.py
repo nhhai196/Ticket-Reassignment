@@ -37,10 +37,10 @@ print('matrix A:\n' + str(A))
 clist = [] #contract list
 for i in range(numF):
 	clist.append((-1*(i+1),[],[]))
-	
+
 for i in range(numG):
 	clist.append((-1*(i+1+numF),[],[]))
-	
+
 print("clist = ")
 print(clist)
 
@@ -52,7 +52,7 @@ print(fbc)
 
 b = [1 for i in range(3)]
 b = b + capacity
-print(b)	
+print(b)
 
 
 newCB, oldc, newA, newb = cp.cardinalpivot(clist, c, A, b, fb2col)
@@ -75,5 +75,12 @@ print(initOB)
 rmins = op.getallrowmins(initOB, numF, bundle2rank)
 for i in range(len(rmins)):
 	print(rmins[i])
-	
-op.ordinalpivot(initOB, oldc, rmins, numF, bundle2rank)
+
+ordlist = datastructure.genordlist(A, numF, bundle2rank, bundlelist, fb2col)
+
+print("matrix A:")
+print(A)
+print("ordlist:")
+print(ordlist)
+
+op.ordinalpivot(initOB, oldc, rmins, numF, bundle2rank, ordlist)
