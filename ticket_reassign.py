@@ -36,10 +36,10 @@ print('matrix A:\n' + str(A))
 
 clist = [] #contract list
 for i in range(numF):
-	clist.append((-1*(i+1),[],[]))
+	clist.append((-1*(i+1),(),[]))
 
 for i in range(numG):
-	clist.append((-1*(i+1+numF),[],[]))
+	clist.append((-1*(i+1+numF),(),[]))
 
 print("clist = ")
 print(clist)
@@ -66,7 +66,7 @@ print(newb)
 initOB = []
 initOB.append(c)
 for i in range(1, numF+numG):
-	initOB.append((-1*(i+1),[],[]))
+	initOB.append((-1*(i+1),(),[]))
 
 
 print("Init ordinal basis:")
@@ -83,4 +83,16 @@ print(A)
 print("ordlist:")
 print(ordlist)
 
-op.ordinalpivot(initOB, oldc, rmins, numF, bundle2rank, ordlist)
+# ordlist in the form (f,b)
+col2fb = {value : key for (key, value) in fb2col.items()}
+print(col2fb)
+
+newordlist = []
+for l in ordlist:
+	temp = list(map(lambda x: col2fb[x], l))
+	newordlist.append(temp)
+
+#print(newordlist)
+
+
+op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
