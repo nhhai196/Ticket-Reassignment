@@ -90,11 +90,22 @@ def findoldminimizer(col2mins, rmins):
 			return i
 
 	print("find old min: Something wen wrong!!!!!")
+	
+# This is the most challenging function to write	
+def findcolmax(newrm, istar, rmins, ordlist, numf, minprice, mtmoney, fclist):
+	# TODO 
+	fc, minprice, mtmoney = getfeasiblecols(newrm, istar, rmins, ordlist, numf, minprice, mtmoney, fclist)
+	
+	# Assuming fc is sorted in decreasing order
+	for c in fc:
+		type = getcoltype(c, istar, numf)
+		if ((type == 1) or ):
+			return c
+		elif (type == 2):
+			
+	return 
 
-# This is the most challenging function to write
-def findcolmax():
-	# TODO
-	return
+
 
 # takes a column, a row, and numf
 # returns the type of the column with respect to the row
@@ -163,3 +174,4 @@ def getfeasiblecolsone(row, rmin, order, numf, minprice, mtmoney):
 def intersection(x, y):
 	x = set(x)
 	return [a for a in y if a in x ]
+
