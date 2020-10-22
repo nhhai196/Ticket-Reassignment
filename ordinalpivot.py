@@ -30,7 +30,6 @@ def ordinalpivot(clist, c, rmins, numf, fp, ordlist):
 	print("Old minimizer istar = " + str(istar))
 
 	# Find the column k that maximizes c_{istar, k}
-<<<<<<< HEAD
 	newc = []
 	#newc = findcolmax()
 
@@ -39,15 +38,6 @@ def ordinalpivot(clist, c, rmins, numf, fp, ordlist):
 
 	# Update row mins of the new basis
 	#newrmins[istar] = newc
-=======
-	newc = findcolmax()
-
-	# Update the basis
-	clist.append(newc)
-
-	# Update row mins of the new basis
-	newrmins[istar] = newc
->>>>>>> 15775ac7022ce1a4e0d4d563df798fb88179cc48
 
 	# Return
 	return clist, newc, newrmins
