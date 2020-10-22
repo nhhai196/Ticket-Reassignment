@@ -221,12 +221,12 @@ def init(str):
 #clist = [] #contract list
     for i in range(numF):
 #    clist.append((-1*(i+1),[],[]))
-        fb2col[-1*(i+1)] = i
+        fb2col[(-1*(i+1), ())] = i
         A[i,i] = 1
 
     for i in range(numG):
 #    clist.append((-1*(i+1+numF),[],[]))
-        fb2col[-1*(i+1+numF)] = i+numF
+        fb2col[(-1*(i+1+numF), ())] = i+numF
         A[i+numF,i+numF] = 1
 
     col_count = numF + numG
