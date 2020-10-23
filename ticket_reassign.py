@@ -46,7 +46,7 @@ print(clist)
 
 
 # Test cardinal pivot
-c = (1, bundlelist[1][1], [0,0])
+c = (1, bundlelist[1][0], [0,0])
 fbc = (c[0], c[1])
 print(fbc)
 
@@ -95,4 +95,5 @@ for l in ordlist:
 #print(newordlist)
 
 
-op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
+clist, newc, newrmins = op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
+print(clist)
