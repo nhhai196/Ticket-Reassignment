@@ -1,5 +1,6 @@
 ######################## Cardinal Pivot ############################
 import numpy
+import datastructure as ds
 
 # @clist	: a list of contracts that is a cardinal basis. Note that 
 #				the order of contracts is important. 
@@ -10,6 +11,9 @@ import numpy
 # @fb2col	: (family, bundle) to column index (of the constraint matrix)
 
 def cardinalpivot(clist, c, A, b, fb2col):
+	print("++++++++ Cardinal pivot:")
+	ds.printbasis(clist, fb2col)
+	print("----- Push in: " +str(c))
 	# First check that if the contract (ignore the price vector) to add 
 	# already in the basis. If Yes, just add the new contract and remove 
 	# the old one.
@@ -60,5 +64,6 @@ def cardinalpivot(clist, c, A, b, fb2col):
 			# of normalized pivotrow
 			newA[k, :] = A[k,:] - A[k,cindex] * newA[pivotrow, :]
 			newb[k] = b[k] - A[k,cindex] * b[pivotrow]
-			
+	
+	print("----- Kick out: " + str(oldc))
 	return clist, oldc, newA, newb

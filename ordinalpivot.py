@@ -10,18 +10,23 @@ import math
 # @rmins	: row min of the basis
 
 def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col):
+	print("++++++++ Ordinal Pivot:")
 	eps = 0.1
 	budget = 2
 	numrows = len(clist)
+	
+	print("Row minimzers:")
+	ds.printbasis(rmins, fb2col)
 
 	# Remove column c from the basis
+	print("---- Kick out: " + str(c))
 	clist.remove(c)
+	
 
 	# Find row minimizers after removing
 	newrmins, newrm = getnewrowmins(clist, c, rmins, numf, fp)
-	print("New row mins:")
-	for i in range(len(newrmins)):
-		print(newrmins[i])
+	print("Row mins after removing :" + str(c))
+	ds.printbasis(newrmins, fb2col)
 	print("The row that has new row min: " + str(newrm))
 
 	# Find the column with 2 row minimizers,
@@ -41,20 +46,34 @@ def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col):
 
 	# Update the basis
 	clist.append(newc)
+	print("---- Push in: " + str(newc) + " : " + str(fb2col[(newc[0], newc[1])]))
 
 	# Update row mins of the new basis
 	newrmins[istar] = newc
 
+	# Sanicy check
+	print(clist)
+	temp = getallrowmins(clist, numf, fp)
+	if (temp !=newrmins):
+		print("ordinal pivot: Something wrong !!!!!!!")
+		ds.printbasis(temp, fb2col)
+	
+	print("New row mins:")
+	ds.printbasis(newrmins, fb2col)
 	# Return
-	print("newrmins=" + str(newrmins))
 	return clist, newc, newrmins
 #
 def	getrowmin(clist, row, numf, fp):
 	rm = clist[0]
+
+	#print("row = " +str(row))
 	for i in range(1, len(clist)):
+		#print(clist[i])
+		#print(ds.strictlyprefer(rm, clist[i], row, numf, fp))
 		if ds.strictlyprefer(rm, clist[i], row, numf, fp):
 			rm = clist[i]
-
+			#print("++++Swap")
+	#print(rm)
 	return rm
 
 # When removing one col from the basis, only one row minimizer is changed
@@ -77,6 +96,8 @@ def getnewrowmins(clist, c, rmins, numf, fp):
 def getallrowmins(clist, numf, fp):
 	rmins = []
 	for row in range(len(clist)):
+		temp = getrowmin(clist, row, numf, fp)
+		#print("temp = " + str(temp))
 		rmins.append(getrowmin(clist, row, numf, fp))
 
 	return rmins
@@ -162,7 +183,7 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 		index = fbmins.index(c)
 		for row in range(len(rmins)):
 			if (row < numf) and (row != istar) and (row != index):		# family case
-				print("Do nothing 2")
+				print("TODO")
 					
 			elif (row >= numf) and (row != istar) and (row != index):	# game case
 				g = row - numf
@@ -181,13 +202,13 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 		if (index < numf):						# family case
 			fbtprice = rmins[2]
 			if (ctype == 3) and (mtype == 3):	# non-zero coefficient	
-				currmaxtms[row] =  rmins[index][2][index]
+				currmaxtms[index] =  ds.dotproduct(c[1], rmins[index][2])
 				
-				temp = bestprice(istar, c[1], currminprice, fbtprice, currmaxtms[row], budget, numf)
+				temp = bestprice(istar, c[1], currminprice, fbtprice, currmaxtms[index], budget, numf)
 				if not temp:
-					currmaxtms[row] =  rmins[index][2][index] - eps
+					currmaxtms[index] =  ds.dotproduct(c[1], rmins[index][2]) - eps
 					fbtprice = []
-					return bestprice(istar, c[1], currminprice, fbtprice, currmaxtms[row], budget, numf)
+					return bestprice(istar, c[1], currminprice, fbtprice, currmaxtms[index], budget, numf)
 				else:
 					return temp
 				
@@ -334,27 +355,31 @@ def getfeasiblecolsone(row, rmin, order, numf, minprice, maxtms, fb2col):
 	
 	fc = []
 	type = getcoltype(rmin, row, numf)
+	print ("type = " + str(type) + " ", end ='')
 	if (type == 1):			# rmin can't be a non-active slack variable
 		print("getfeasiblecolsone: Something wrong!!!!!")
 	elif (type == 2):		# non-slack with zero coefficient
 		# Remove everying after the index, any price is OK
 		fc = order[0:index]
 	elif (type == 3):		# non-slack with non-zero coefficient
-		print("type 3")
+		#print("type 3")
 		if (row < numf):	# family case
+			print("family case")
 			# Remove all the cols that is less preferred than rmin
 			fc = order[0:index]
 			# the total money is at most ...
 			maxtms[row] = ds.dotproduct(rmin[1], rmin[2])
 		else:				# game case, price matters
+			print("game case")
 			g = row - numf
+			fc = order[:len(order) - 1]
 			# The price of game g is at least as expensive as the price of game g at rmin
 			minprice[g] = rmin[2][g]
 	else:					# active slack variable
-		print("type 4")
-		fc = order[:len(order)-1]		# any col, any price except the last is Ok
+		#print("type 4")
+		fc = order[:len(order)-1]		# any col, any price is OK
 	
-	print("fc =" + str(list(map(lambda x: fb2col[x], fc))))
+	print("row = " + str(row) + ": " + "fc =" + str(list(map(lambda x: fb2col[x], fc))))
 	return fc, minprice, maxtms
 
 #  list intersection
@@ -366,6 +391,9 @@ def intersection(x, y):
 def sortorder(sortedlist, sublist):
 	ssl = set(sublist)
 	return [x for x in sortedlist if x in ssl]
-	
+
+
+
+
 	
 

@@ -58,16 +58,17 @@ def gstrictlyprefer(a, b, g, numf):
 	elif ((not sa) and sb):
 		return False
 	else:					# both are non-slack variable
-		za = iszerocoff(a, row)
-		zb = iszerocoff(b, row)
+		za = iszerocoeff(a, g, numf)
+		zb = iszerocoeff(b, g, numf)
 
 		if (za and zb):
-			breaktie(a,b)
+			return breaktie(a,b)
 		elif (za and (not zb)):
 			return True
 		elif ((not za) and zb):
 			return False
 		else:				# both are non-zeros
+			g = g - numf
 			if (a[2][g] > b[2][g]):	# compare price
 				return True
 			elif (a[2][g] < b[2][g]):
@@ -77,6 +78,7 @@ def gstrictlyprefer(a, b, g, numf):
 
 # for a family row
 def fstrictlyprefer(a, b, f, numf, fp):
+	#print("calling fstrictlyprefer")
 	sa = isslack(a)
 	sb = isslack(b)
 
@@ -100,15 +102,22 @@ def fstrictlyprefer(a, b, f, numf, fp):
 		zb = iszerocoeff(b, f, numf)
 
 		if (za and zb):
-			breaktie(a,b)
+			#print("Both zeros")
+			#print (breaktie(a,b))
+			return breaktie(a,b)
 		elif (za and (not zb)):
 			return True
 		elif ((not za) and zb):
 			return False
 		else:				# both are non-zeros
-			if (fp[a[0]] < fp[b[0]]):
+			print("--------- Both non-zeros")
+			print(a)
+			print(b)
+			print(f)
+			print(fp)
+			if (fp[f][a[1]] < fp[f][b[1]]):
 				return True
-			elif (fp[a[0]] > fp[b[0]]):
+			elif (fp[f][a[1]] > fp[f][b[1]]):
 				return False
 			else:
 				msa = dotproduct(a[1], a[2])	# money spent
@@ -150,7 +159,8 @@ def breaktievector(a, b):
         elif (a[i] > b[i]):
             return False
 
-    print("+++++++ Break tie: ERROR ++++++")
+    print("+++++++ Break tie vector: SAME ++++++")
+    return False
 
 #
 def isslack(c):
@@ -269,3 +279,13 @@ def genordlist(A, numf, fp, bundlelist, fb2col):
 		#get type 4 column
 		ordlist[i].append(i)
 	return ordlist
+
+# contract to fb		
+def contract2fb(c):
+	return (c[0], c[1])
+	
+# Function for printing out row minimizers
+def printbasis(basis, fb2col):
+	for i in range(len(basis)):
+		c = basis[i]
+		print(str(c) + " : " + str(fb2col[(c[0], c[1])]))
