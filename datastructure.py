@@ -96,8 +96,8 @@ def fstrictlyprefer(a, b, f, numf, fp):
 	elif ((not sa) and sb):
 		return False
 	else:					# both are non-slack variable
-		za = iszerocoeff(a, row, numf)
-		zb = iszerocoeff(b, row, numf)
+		za = iszerocoeff(a, f, numf)
+		zb = iszerocoeff(b, f, numf)
 
 		if (za and zb):
 			breaktie(a,b)

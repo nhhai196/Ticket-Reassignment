@@ -4,6 +4,7 @@ import csv
 import numpy as np
 import cardinalpivot as cp
 import ordinalpivot as op
+import scarfpivot as sp
 
 #argv[1]: csv file name in the following format
 #row 1: number of families, number of games
@@ -55,11 +56,11 @@ b = b + capacity
 print(b)
 
 
-newCB, oldc, newA, newb = cp.cardinalpivot(clist, c, A, b, fb2col)
-print(newCB)
-print(oldc)
-print(newA)
-print(newb)
+#newCB, oldc, newA, newb = cp.cardinalpivot(clist, c, A, b, fb2col)
+#print(newCB)
+#print(oldc)
+#print(newA)
+#print(newb)
 #a = np.zeros([5 * 10**3, 10**6])
 
 # Test ordinal pivot
@@ -95,5 +96,6 @@ for l in ordlist:
 #print(newordlist)
 
 
-clist, newc, newrmins = op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
-print(clist)
+#clist, newc, newrmins = op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
+#print(clist)
+sp.scarfpivot(clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col)
