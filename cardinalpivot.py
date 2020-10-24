@@ -66,4 +66,6 @@ def cardinalpivot(clist, c, A, b, fb2col):
 			newb[k] = b[k] - A[k,cindex] * b[pivotrow]
 	
 	print("----- Kick out: " + str(oldc))
+	print(newA)
+	print(newb)
 	return clist, oldc, newA, newb
