@@ -22,7 +22,7 @@ numF, numG, bundle2rank, bundlelist, fb2col, budget, capacity, numcol, A = datas
 #budget: budget[f-1] is the budget of family f
 #capacity: capacity[g-1] is the capacity of game g
 #numcol: number of columns for matrix A
-#A: the Scarf matrix of size (numF+numG) x numcol
+#A: the Scarf matrix of size (numF+numG) x numcol, columns are in alphabetic order
 
 print('numF: ' + str(numF))
 print('numG: ' + str(numG))

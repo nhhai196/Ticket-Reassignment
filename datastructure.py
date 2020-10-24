@@ -178,6 +178,7 @@ def init(str):
 
     bundle2rank = [] #bundle maps to the rank, each family has one dictionary
     bundlelist = [] #preference list over bundles, each family has one list
+    sortedbundle = [] #bundle of interest in incearsing alphabetic order, each family has one
     fb2col = {} #map (family,bundle) to the column index of matrix A
     numcol = 0
 
@@ -205,17 +206,25 @@ def init(str):
                         item_count = 1
                         bundle2rank.append({})
                         bundlelist.append([])
+                        unsortedlist = []
                     elif item_count > 0:
                         if item.strip(): #filter empty string
                             intlist = [int(float(i)) for i in item.split(',')] #convert string to int
+                            unsortedlist.append(intlist)
                             inttuple = tuple(intlist)
                             bundle2rank[line_count-1][inttuple] = item_count #bundle2rank[f-1] maps from a tuple bundle to rank for family f
-                            bundlelist[line_count-1].append(inttuple) #bundle2rank[f-1] is the bundle ranking for family f
-                            fb2col[(line_count-1,inttuple)] = numF + numG + numcol # (f-1, bundle) maps to the column index of A
+                            bundlelist[line_count-1].append(inttuple)
+                            #fb2col[(line_count-1,inttuple)] = numF + numG + numcol # (f-1, bundle) maps to the column index of A
                             item_count += 1
-                            numcol += 1
+                            #numcol += 1
             #print(bundle2rank[line_count-1])
             #print(bundlelist[line_count-1])
+                unsortedlist.sort()
+                sortedbundle.append(unsortedlist)
+                for item in unsortedlist:
+                    inttuple = tuple(item)
+                    fb2col[(line_count-1,inttuple)] = numF + numG + numcol
+                    numcol += 1
                 line_count += 1
             else:
                 capacity = [int(float(i)) for i in row if i.strip()] #capacity[g-1] is the capacity of game g
@@ -241,7 +250,7 @@ def init(str):
 
     col_count = numF + numG
     for i in range(numF):
-        for j in bundlelist[i]:
+        for j in sortedbundle[i]:
             A[i, col_count] = 1
             game_count = 0
             for k in j:
@@ -280,10 +289,10 @@ def genordlist(A, numf, fp, bundlelist, fb2col):
 		ordlist[i].append(i)
 	return ordlist
 
-# contract to fb		
+# contract to fb
 def contract2fb(c):
 	return (c[0], c[1])
-	
+
 # Function for printing out row minimizers
 def printbasis(basis, fb2col):
 	for i in range(len(basis)):
