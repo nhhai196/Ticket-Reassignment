@@ -20,7 +20,7 @@ def cardinalpivot(clist, c, A, b, fb2col):
 	for i in range(len(clist)):
 		tempc = clist[i]
 		if (tempc[0] == c[0] and tempc[1] == c[1]):
-			clist[i] = tempc
+			clist[i] = c
 			return clist, tempc, A, b
 			
 	numrows = len(A)
