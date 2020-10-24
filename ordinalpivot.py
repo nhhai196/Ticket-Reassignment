@@ -9,10 +9,10 @@ import math
 # @fp		: famimy preferences
 # @rmins	: row min of the basis
 
-def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col):
+def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	print("++++++++ Ordinal Pivot:")
 	eps = 0.5
-	budget = 3
+	#budget = 3
 	numrows = len(clist)
 	
 	print("Row minimizers:")
@@ -38,7 +38,7 @@ def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col):
 	print("------------ Old minimizer istar = " + str(istar))
 	if istar >= numf:
 		print("***************************** Game case finally")
-		#return
+		return None
 
 	# Find the column k that maximizes c_{istar, k}
 	newc = []
@@ -145,7 +145,7 @@ def findcolmax(eps, newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 		if ((type == 1)):
 			return (c[0], c[1], [])
 		elif (type == 2) or (type == 3):
-			temp = findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins)
+			temp = findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget[c[0]], fbmins)
 			print("temp = " + str(temp))
 			if not not temp:
 				return (c[0], c[1],temp)
@@ -181,7 +181,7 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 					else:
 						currminprice[g] = rmins[row][2][g]
 						
-		return bestprice(istar, c[1], currminprice, [], budget+1, budget, numf)			
+		return bestprice(eps, istar, c[1], currminprice, [], budget+1, budget, numf)			
 	# For a row that already have a contract without price (f,b) in the basis				
 	else:	
 		index = fbmins.index(c)
@@ -217,11 +217,11 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 			if (ctype == 3) and (mtype == 3):	# non-zero coefficient	
 				currmaxtms[index] =  ds.dotproduct(c[1], rmins[index][2])
 				
-				temp = bestprice(istar, c[1], currminprice, fbtprice, currmaxtms[index], budget, numf)
+				temp = bestprice(eps, istar, c[1], currminprice, fbtprice, currmaxtms[index], budget, numf)
 				if not temp:
 					currmaxtms[index] =  ds.dotproduct(c[1], rmins[index][2]) - eps
 					fbtprice = []
-					return bestprice(istar, c[1], currminprice, fbtprice, currmaxtms[index], budget, numf)
+					return bestprice(eps, istar, c[1], currminprice, fbtprice, currmaxtms[index], budget, numf)
 				else:
 					return temp
 				
@@ -237,11 +237,11 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 				if not ds.breaktie(cc, rmins[row]):
 					currminprice[g] += eps	# must be eps higher
 					
-				temp = bestprice(istar, c[1], currminprice, gbtprice, budget + 1, budget, numf)
+				temp = bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf)
 				if not temp:
 					gbtprice = []
 					currminprice[g] = rmins[index][2][g] + eps
-					return bestprice(istar, c[1], currminprice, gbtprice, budget + 1, budget, numf)
+					return bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf)
 				else:
 					return temp
 					
@@ -255,19 +255,22 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 	#return currminprice, btprice currmaxtms
 
 # 
-def bestprice(istar, alpha, minprice, btprice, maxtot, budget, numf):
+def bestprice(eps, istar, alpha, minprice, btprice, maxtot, budget, numf):
 	if (istar < numf):	# family case
 			return fbestprice(istar, alpha, minprice, btprice, maxtot, budget)
 	else:				# game case
 			return gbestprice(istar, alpha, minprice, btprice, maxtot, budget)
+		
+	
 	
 # Check if there exists a price that is coordinate-wise 
 # greater than the minprice and is tie-break larger than btprice.
 
 def fbestprice(istar, alpha, minprice, btprice, maxtot, budget):
 	ms = ds.dotproduct(alpha, minprice)
+	tol = 10**(-8)
 	
-	if isfeasibleprice(alpha, minprice, budget) and (ms <= maxtot):
+	if isfeasibleprice(alpha, minprice, budget) and (ms <= maxtot + tol):
 		if not btprice:	# empty
 			return minprice
 		else:			# non-empty

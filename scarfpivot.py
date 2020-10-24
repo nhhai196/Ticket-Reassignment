@@ -7,7 +7,7 @@ import cardinalpivot as cp
 import ordinalpivot as op
 
 
-def scarfpivot(CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col):
+def scarfpivot(CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	print("+++++++++++++++++++++++++++++++++ Scarf Pivoting ++++++++++++++++++++++++++++++++++")
 	count = 0
 	while True:
@@ -19,7 +19,7 @@ def scarfpivot(CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col):
 			print("Done")
 			break
 		
-		OB, c, rmins = op.ordinalpivot(OB, newc, rmins, numf, numg, fp, ordlist, fb2col)
+		OB, c, rmins = op.ordinalpivot(OB, newc, rmins, numf, numg, fp, ordlist, fb2col, budget)
 		
 		#if count == 14:
 		#	break

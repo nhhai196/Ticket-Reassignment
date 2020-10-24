@@ -98,4 +98,4 @@ for l in ordlist:
 
 #clist, newc, newrmins = op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
 #print(clist)
-sp.scarfpivot(clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col)
+sp.scarfpivot(clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
