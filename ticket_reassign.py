@@ -47,7 +47,7 @@ print(clist)
 
 
 # Test cardinal pivot
-c = (1, bundlelist[1][0], [0,0])
+c = (1, bundlelist[1][1], [0,0])
 fbc = (c[0], c[1])
 print(fbc)
 

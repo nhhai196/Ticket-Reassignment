@@ -110,11 +110,11 @@ def fstrictlyprefer(a, b, f, numf, fp):
 		elif ((not za) and zb):
 			return False
 		else:				# both are non-zeros
-			print("--------- Both non-zeros")
-			print(a)
-			print(b)
-			print(f)
-			print(fp)
+			#print("--------- Both non-zeros")
+			#print(a)
+			#print(b)
+			#print(f)
+			#print(fp)
 			if (fp[f][a[1]] < fp[f][b[1]]):
 				return True
 			elif (fp[f][a[1]] > fp[f][b[1]]):
@@ -123,9 +123,9 @@ def fstrictlyprefer(a, b, f, numf, fp):
 				msa = dotproduct(a[1], a[2])	# money spent
 				msb = dotproduct(b[1], b[2])
 				if (msa > msb):
-					return True
-				elif (msa < msb):
 					return False
+				elif (msa < msb):
+					return True
 				else:
 					breaktie(a,b)
 
