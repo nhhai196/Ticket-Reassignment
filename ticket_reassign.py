@@ -1,5 +1,5 @@
 import sys
-import datastructure
+import datastructure 
 import csv
 import numpy as np
 import cardinalpivot as cp
@@ -98,4 +98,5 @@ for l in ordlist:
 
 #clist, newc, newrmins = op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
 #print(clist)
+#print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
 sp.scarfpivot(clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
