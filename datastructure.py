@@ -127,8 +127,16 @@ def fstrictlyprefer(a, b, f, numf, fp):
 				elif (msa < msb):
 					return True
 				else:
-					breaktie(a,b)
+					return breaktie(a,b)
 
+#
+def weaklyprefer(a,b,row,numf, fp):
+	if a == b:
+		return True
+	else:
+		return strictlyprefer(a,b,row, numf,fp)
+		
+		
 # dot product of two vectors with the same length
 def dotproduct(x, y):
 	sum = 0

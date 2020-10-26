@@ -21,8 +21,8 @@ def scarfpivot(CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 		
 		OB, c, rmins = op.ordinalpivot(OB, newc, rmins, numf, numg, fp, ordlist, fb2col, budget)
 		
-		#if count == 14:
-		#	break
+		if count == 20:
+			break
 		
 	#print("count = " + str(count))
 	
