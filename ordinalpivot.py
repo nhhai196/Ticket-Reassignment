@@ -61,6 +61,7 @@ def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 		print("---- ordinal pivot: Something wrong !!!!!!!")
 		ds.printbasis(temp, fb2col)
 		print(temp)
+	print("budget = " +str(budget))
 	if cor.isordbasis(eps, clist, numf, numg, fp, ordlist, fb2col, budget):
 		print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
 	else:
@@ -146,20 +147,63 @@ def findcolmax(eps, newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 	
 	# Assuming fc is sorted in decreasing order
 	# Linear search here, binary search might be better 
+	mpvlist = []		# Store the highest price vectors of feasible cols of type 3
+	mpglist =[]			# Store the highest price of the game of feasible cols of type 3
+	t3clist = []		# Store all feasible cols of type 3
+	
+	# pop out the slack col of type 4 in the feasible cols list
+	scol = fc.pop(len(fc)-1)
+	
 	for c in fc:		
 		type = getcoltype(c, istar, numf)
 		if ((type == 1)):
 			return (c[0], c[1], [])
-		elif (type == 2) or (type == 3):
+		elif (type == 2):
 			temp = findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget[c[0]], fbmins)
-			print("temp = " + str(temp))
+			#print("temp = " + str(temp))
 			if not not temp:
 				return (c[0], c[1],temp)
-		else:
-			return (c[0], c[1], [])
-	return 
+				
+		if (type == 3):
+			if istar < numf:	# family case
+				temp = findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget[c[0]], fbmins)
+				if not not temp:
+					return (c[0], c[1],temp)
+			else:				# game case
+				# In this case need to loop through all feasible cols of type 3
+				# and find the col that can pay the highest price
+				print("@@@@@@ c = " +str(c))
+				t3clist.append(c)
+				temp = findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget[c[0]], fbmins)
+				
+				print(temp)
+				mpvlist.append(temp)
+				if temp == []:
+					mpglist.append(-1)
+					
+				else:
+					mpglist.append(temp[istar-numf])
+
+			
+	# If not return yet, must be type 3 and istar >= numf
+	if (istar >= numf):
+		print("@@@@ Game case: looking for the best price")
+		maxval = max(mpglist)
+		index = mpglist.index(maxval)
+		fb = t3clist[index]
+		price = mpvlist[index]
+		print(maxval)
+		print(mpglist)
+		print(mpvlist)
+		
+		if not not price:
+			return (fb[0], fb[1], price)
+		
+	# If not return yet, the best col must the the type 4
+	return (scol[0], scol[1], [])
 	
 
+# always returns the best price or []
 	
 def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 	numg = len(rmins) - numf
@@ -226,8 +270,9 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 		
 		if (index < numf):						# family case
 			print("---------------- Family case")
-			fbtprice = rmins[index][2]
-			if (ctype == 3) and (mtype == 3):	# non-zero coefficient	
+			
+			if (ctype == 3) and (mtype == 3):	# non-zero coefficient
+				fbtprice = rmins[index][2]
 				currmaxtms[index] =  ds.dotproduct(c[1], rmins[index][2])
 				
 				temp = bestprice(eps, istar, c[1], currminprice, fbtprice, currmaxtms[index], budget, numf, diff)
@@ -237,6 +282,11 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 					return bestprice(eps, istar, c[1], currminprice, fbtprice, currmaxtms[index], budget, numf, diff)
 				else:
 					return temp
+			elif (ctype == 2) and (mtype == 2):
+				fbtprice = rmins[index][2]
+				return bestprice(eps, istar, c[1], currminprice, fbtprice, budget+1, budget, numf, diff)
+			else:
+				return bestprice(eps, istar, c[1], currminprice, [], budget+1, budget, numf, diff)
 				
 		else:									# game case
 			print("---------------- Finally touched game case")
@@ -245,29 +295,50 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 			if (istar >= numf):
 				currminprice[istar - numf] = 0
 				
-			gbtprice = rmins[index][2]
+			
 			if (ctype == 3) and (mtype == 3):	# non-zero coefficient
-				#if not ds.breaktie(cc, rmins[index]):
-				currminprice[g] = rmins[index][2][g] 
-					
+				print("*********** Degbug Here")
 				print("price = " + str(currminprice))
-					
-				temp = bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf, diff)
-				if not temp:
+				
+				if (istar <numf):
+					gbtprice = rmins[index][2]
+					currminprice[g] = rmins[index][2][g] 	
+					temp = bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf, diff)
+					if not temp:
+						gbtprice = []
+						currminprice[g] = rmins[index][2][g] + eps
+						return bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf, diff)
+					else:
+						return temp
+				else:
+					print("&&&&&&&&&&&&&&&&&&&&&&&& Check")
+					gbtprice = rmins[index][2]
+					currminprice[g] = rmins[index][2][g] 	
+					temp1 = bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf, diff)
+
 					gbtprice = []
 					currminprice[g] = rmins[index][2][g] + eps
-					return bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf, diff)
-				else:
-					return temp
+					temp2 = bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf, diff)
 					
-
-		
-	#btprice = fbtprice + gbtprice
-	#if (len(btprice) > 1):
-	#	print("findbestprice: Something wrong")
-	#	return []
+					print("temp1 =" + str(temp1))
+					print("temp2 =" +str(temp2))
 					
-	#return currminprice, btprice currmaxtms
+					if (temp1 == []) and (temp2 == []):
+						return []
+					elif (temp1 == []) and (temp2 != []):
+						return temp2
+					elif (temp1 != []) and (temp2 == []):
+						return temp1
+					else:
+						if (temp1[istar - numf] >= temp2[istar-numf]):
+							return temp1
+						else:
+							return temp2
+			elif (ctype == 2) and (mtype == 2):
+				gbtprice = rmins[index][2]
+				return bestprice(eps, istar, c[1], currminprice, gbtprice, budget+1, budget, numf, diff)
+			else:
+				return bestprice(eps, istar, c[1], currminprice, [], budget+1, budget, numf, diff)
 
 # 
 def bestprice(eps, istar, alpha, minprice, btprice, maxtot, budget, numf, diff):
@@ -331,6 +402,7 @@ def gbestprice(eps, istar, alpha, numf, minprice, btprice, maxtot, budget, diff)
 				if (g < jstar):
 					bestprice[g] = btprice[g]	# TODO
 				elif (g == jstar):
+					print("THIS CASE")
 					if (btprice[g] >= eps - 10**(-8)):
 						bestprice[g] = btprice[g] - eps
 					else:
@@ -368,7 +440,7 @@ def gfindmaxprice(eps, g, alpha, minprice, maxtot, budget):
 def breaktieindex(x,y):
 	tol = 10**(-8)
 	for i in range(len(x)):
-		if (x[i] < y[i] + tol):
+		if (x[i] < y[i] - tol): # TODO
 			return i
 			
 	return -1

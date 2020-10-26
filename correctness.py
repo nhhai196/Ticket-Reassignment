@@ -60,7 +60,7 @@ def enumprice(eps, alpha, numg, budget):
 			for i in range(maxp):
 				val = i * eps
 				#print("val = " +str(val))
-				temp = enumprice(eps, alpha[1:], numg-1, budget - i * eps)
+				temp = enumprice(eps, alpha[1:], numg-1, budget - i * eps * alpha[0])
 				#print(temp)
 				prices = [[val] + x for x in temp]
 					
