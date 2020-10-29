@@ -9,7 +9,7 @@ import datastructure as ds
 def isordbasis(eps, basis, numf, numg, fp, ordlist, fb2col, budget):
 	# Get all the row mins
 	rmins = op.getallrowmins(basis, numf, fp)
-	
+	flag = True
 	for c in fb2col:
 		if (c[0] >=0):
 			prices = enumprice(eps, c[1], numg, budget[c[0]])
@@ -19,9 +19,10 @@ def isordbasis(eps, basis, numf, numg, fp, ordlist, fb2col, budget):
 					print("+++++++++++ ERROR: col below not dominated")
 					print(contract)
 					print(rmins)
-					return False
+					flag = False
+					#return False
 							
-	return True
+	return flag
 				
 # def 
 def dominated(contract, rmins, numf, fp):

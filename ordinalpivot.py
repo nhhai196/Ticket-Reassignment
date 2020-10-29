@@ -12,7 +12,7 @@ import correctness as cor
 
 def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	print("++++++++ Ordinal Pivot:")
-	eps = 0.5
+	eps = 0.25
 	#budget = 3
 	numrows = len(clist)
 	
@@ -243,7 +243,8 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 				if (i != istar) and (fbmins[i] == c):
 					index = i
 
-		print("index = " + str(index))
+		print("###################index = " + str(index))
+		print("###################istar = " + str(istar))
 		
 		# best price must be differrent from the existing one
 		diff = rmins[index][2]
@@ -425,8 +426,14 @@ def gbestprice(eps, istar, alpha, numf, minprice, btprice, maxtot, budget, diff)
 # 
 def gfindmaxprice(eps, g, alpha, minprice, maxtot, budget):
 	#bestprice = copy.deepcopy(minprice)
-	
-	beta = math.floor(min(maxtot, budget) - ds.dotproduct(alpha, minprice))/(alpha[g] * eps)
+	tol = 10**(-8)
+	#print(maxtot)
+	#print(budget)
+	#print(alpha)
+	#print(min(maxtot, budget) - ds.dotproduct(alpha, minprice))
+	#print(alpha[g] * eps)
+	beta = math.floor((min(maxtot, budget) - ds.dotproduct(alpha, minprice) + tol)/(alpha[g] * eps))
+	print("beta = " + str(beta))
 
 	if beta < 0:
 		print("++++++++ gfindmaxprice: no feasible price")
