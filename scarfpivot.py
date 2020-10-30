@@ -21,6 +21,10 @@ def scarfpivot(CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 		
 		OB, c, rmins = op.ordinalpivot(OB, newc, rmins, numf, numg, fp, ordlist, fb2col, budget)
 		
+		if (fb2col[ds.contract2fb(c)] == 0):
+			print("Done")
+			break
+		
 		#if count == 20:
 		#	break
 		
