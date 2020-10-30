@@ -21,6 +21,11 @@ def cardinalpivot(clist, c, A, b, fb2col):
 		tempc = clist[i]
 		if (tempc[0] == c[0] and tempc[1] == c[1]):
 			clist[i] = c
+			
+			#print("----- Kick out: " + str(tempc))
+			#print(A)
+			#print(b)
+			
 			return clist, tempc, A, b
 			
 	numrows = len(A)
