@@ -19,6 +19,9 @@ def scarfpivot(CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 		if (fb2col[ds.contract2fb(newc)] == 0):
 			#x = np.linalg.solve(A,b)
 			#print("!!!!!!!! x = " + str(x))
+			print(CB)
+			print(b)
+			print(OB)
 			print("Card: done")
 			break
 		
