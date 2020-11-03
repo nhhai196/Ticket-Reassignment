@@ -5,6 +5,7 @@ import numpy as np
 import cardinalpivot as cp
 import ordinalpivot as op
 import scarfpivot as sp
+import time
 
 #argv[1]: csv file name in the following format
 #row 1: number of families, number of games
@@ -99,4 +100,8 @@ for l in ordlist:
 #clist, newc, newrmins = op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
 #print(clist)
 #print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
+
+start = time.time()
 sp.scarfpivot(clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
+end = time.time()
+print(end - start)

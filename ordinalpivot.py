@@ -12,12 +12,12 @@ import correctness as cor
 
 def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	print("++++++++ Ordinal Pivot:")
-	eps = 0.02
+	eps = 0.25
 	#budget = 3
 	numrows = len(clist)
 	
-	print("Row minimizers:")
-	ds.printbasis(rmins, fb2col)
+	#print("Row minimizers:")
+	#ds.printbasis(rmins, fb2col)
 
 	# Remove column c from the basis
 	print("---- Kick out: " + str(c))
@@ -26,19 +26,19 @@ def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	
 	# Find row minimizers after removing
 	newrmins, newrm = getnewrowmins(clist, c, rmins, numf, fp)
-	print("Row mins after removing :" + str(c))
-	ds.printbasis(newrmins, fb2col)
-	print("The row that has new row min: " + str(newrm))
+	#print("Row mins after removing :" + str(c))
+	#ds.printbasis(newrmins, fb2col)
+	#print("The row that has new row min: " + str(newrm))
 
 	# Find the column with 2 row minimizers,
 	col2mins = getcoltwomins(rmins, newrmins)
-	print("Col with two mins: " + str(col2mins))
+	#print("Col with two mins: " + str(col2mins))
 
 	# Find the row containing the old minimizer
 	istar = findoldminimizer(col2mins, rmins)
 	print("------------ Old minimizer istar = " + str(istar))
-	if istar >= numf:
-		print("***************************** Game case finally")
+	#if istar >= numf:
+	#	print("***************************** Game case finally")
 		#return None
 
 	# Find the column k that maximizes c_{istar, k}
@@ -50,27 +50,27 @@ def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 
 	# Update the basis
 	clist.append(newc)
-	print("---- Push in: " + str(newc) + " : " + str(fb2col[(newc[0], newc[1])]))
+	print("---- Push in : " + str(newc) + " : " + str(fb2col[(newc[0], newc[1])]))
 
 	# Update row mins of the new basis
 	newrmins[istar] = newc
 
 	# Sanity check
-	print("Sanity check:" + str(clist))
-	temp = getallrowmins(clist, numf, fp)
-	if (temp !=newrmins):
-		print("---- ordinal pivot: Something wrong !!!!!!!")
-		ds.printbasis(temp, fb2col)
-		print(temp)
-	print("budget = " +str(budget))
-	if cor.isordbasis(eps, clist, numf, numg, fp, ordlist, fb2col, budget):
-		print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
-	else:
-		print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
-		return
+	#print("Sanity check:" + str(clist))
+	#temp = getallrowmins(clist, numf, fp)
+	#if (temp !=newrmins):
+	#	print("---- ordinal pivot: Something wrong !!!!!!!")
+	#	ds.printbasis(temp, fb2col)
+	#	print(temp)
+	#print("budget = " +str(budget))
+	#if cor.isordbasis(eps, clist, numf, numg, fp, ordlist, fb2col, budget):
+	#	print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
+	#else:
+	#	print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
+	#	return
 
-	print("New row mins:")
-	ds.printbasis(newrmins, fb2col)
+	#print("New row mins:")
+	#ds.printbasis(newrmins, fb2col)
 	# Return
 	return clist, newc, newrmins
 	
@@ -182,7 +182,7 @@ def findcolmax(eps, newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 			else:				# game case
 				# In this case need to loop through all feasible cols of type 3
 				# and find the col that can pay the highest price
-				print("@@@@@@ c = " +str(c))
+				#print("@@@@@@ c = " +str(c))
 				t3clist.append(c)
 				temp = findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget[c[0]], fbmins)
 				
@@ -400,9 +400,9 @@ def gbestprice(eps, istar, alpha, numf, minprice, btprice, maxtot, budget, diff)
 	bestprice = copy.deepcopy(minprice)
 	g = istar - numf
 	
-	print("minprice =" + str(minprice))
-	print("btprice =" + str(btprice))
-	print(maxtot)
+	#print("minprice =" + str(minprice))
+	#print("btprice =" + str(btprice))
+	#print(maxtot)
 	
 	
 	if isfeasibleprice(alpha, minprice, budget) and (ms <= maxtot + tol):
@@ -414,12 +414,12 @@ def gbestprice(eps, istar, alpha, numf, minprice, btprice, maxtot, budget, diff)
 			#print("++++++++++++ gbest price: TODO 2")
 			if ds.breaktievector(minprice, btprice):
 				jstar = breaktieindex(minprice, btprice)
-				print("jstar = " + str(jstar))
+				#print("jstar = " + str(jstar))
 				
 				if (g < jstar):
 					bestprice[g] = btprice[g]	# TODO
 				elif (g == jstar):
-					print("THIS CASE")
+					#print("THIS CASE")
 					if (btprice[g] >= eps - 10**(-8)):
 						bestprice[g] = btprice[g] - eps
 					else:
@@ -436,7 +436,7 @@ def gbestprice(eps, istar, alpha, numf, minprice, btprice, maxtot, budget, diff)
 	if (bestprice == diff):
 		bestprice = []
 	
-	print("Set bestprice = " + str(bestprice))
+	#print("Set bestprice = " + str(bestprice))
 	return bestprice
 	
 # 
