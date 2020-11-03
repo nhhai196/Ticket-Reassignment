@@ -14,6 +14,7 @@ def cardinalpivot(clist, c, A, b, fb2col):
 	print("++++++++ Cardinal pivot:")
 	ds.printbasis(clist, fb2col)
 	print("----- Push in: " +str(c))
+	numf = len(clist)
 	# First check that if the contract (ignore the price vector) to add 
 	# already in the basis. If Yes, just add the new contract and remove 
 	# the old one.
@@ -21,13 +22,11 @@ def cardinalpivot(clist, c, A, b, fb2col):
 		tempc = clist[i]
 		if (tempc[0] == c[0] and tempc[1] == c[1]):
 			clist[i] = c
-			
-			#print("----- Kick out: " + str(tempc))
-			#print(A)
-			#print(b)
-			
+			print("+++++ Kick out: " + str(tempc))
+			print(roundmatrix(A))
+			print(roundvector(b))
 			return clist, tempc, A, b
-			
+	
 	numrows = len(A)
 	numcols = len(A[0])
 	
@@ -68,9 +67,28 @@ def cardinalpivot(clist, c, A, b, fb2col):
 			# Set it equal to the original value minus a multiple 
 			# of normalized pivotrow
 			newA[k, :] = A[k,:] - A[k,cindex] * newA[pivotrow, :]
-			newb[k] = b[k] - A[k,cindex] * b[pivotrow]
+			newb[k] = b[k] - A[k,cindex] * newb[pivotrow]
 	
 	print("----- Kick out: " + str(oldc))
-	print(newA)
-	print(newb)
+	print(roundmatrix(newA))
+	print("newb = " + str(roundvector(newb)))
 	return clist, oldc, newA, newb
+
+	
+def roundmatrix(A):
+	m = len(A)
+	n = len(A[0,:])
+	B = numpy.zeros([m, n])
+	for i in range(m):
+		for j in range(n):
+			B[i][j] = round(A[i][j], 2)
+			
+	return B
+	
+def roundvector(b):
+	m = len(list(b))
+	newb = numpy.zeros(m)
+	for i in range(m):
+		newb[i] = round(b[i], 2)
+		
+	return newb

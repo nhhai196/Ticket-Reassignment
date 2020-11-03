@@ -39,6 +39,7 @@ def strictlyprefer(a, b, row, numf, fp):
 # for game row
 # g is offset by  + numF
 def gstrictlyprefer(a, b, g, numf):
+	tol = 10**(-6)
 	sa = isslack(a)
 	sb = isslack(b)
 
@@ -69,16 +70,18 @@ def gstrictlyprefer(a, b, g, numf):
 			return False
 		else:				# both are non-zeros
 			g = g - numf
-			if (a[2][g] > b[2][g]):	# compare price
-				return True
-			elif (a[2][g] < b[2][g]):
-				return False
+			if not isequal(a[2][g], b[2][g]):
+				if (a[2][g] + tol > b[2][g]):	# compare price
+					return True
+				elif (a[2][g] < b[2][g] + tol):
+					return False
 			else: 		# break tie
 				return breaktie(a,b)
 
 # for a family row
 def fstrictlyprefer(a, b, f, numf, fp):
 	#print("calling fstrictlyprefer")
+	tol = 10**(-6)
 	sa = isslack(a)
 	sb = isslack(b)
 
@@ -122,16 +125,17 @@ def fstrictlyprefer(a, b, f, numf, fp):
 			else:
 				msa = dotproduct(a[1], a[2])	# money spent
 				msb = dotproduct(b[1], b[2])
-				if (msa > msb):
-					return False
-				elif (msa < msb):
-					return True
+				if not isequal(msa, msb):
+					if (msa + tol > msb):
+						return False
+					elif (msa < msb + tol):
+						return True
 				else:
 					return breaktie(a,b)
 
 #
 def weaklyprefer(a,b,row,numf, fp):
-	if a == b:
+	if isequalcon(a,b):
 		return True
 	else:
 		return strictlyprefer(a,b,row, numf,fp)
@@ -160,15 +164,17 @@ def breaktie(a,b):
 # @a: the first bundle
 # @b: the second bundle
 def breaktievector(a, b):
-    n = len(a)
-    for i in range(n):
-        if (a[i] < b[i]):
-            return True
-        elif (a[i] > b[i]):
-            return False
+	tol = 10**(-6)
+	n = len(a)
+	for i in range(n):
+		if not isequal(a[i], b[i]):
+			if (a[i] < b[i] + tol):
+				return True
+			elif (a[i] + tol > b[i]):
+				return False
 
-    print("+++++++ Break tie vector: SAME ++++++")
-    return False
+	#print("+++++++ Break tie vector: SAME ++++++")
+	return False
 
 #
 def isslack(c):
@@ -180,6 +186,26 @@ def iszerocoeff(a, row, numf):
 		return not(a[0] == row)
 	else:
 		return a[1][row - numf] == 0
+		
+
+# check if the same floating point values		
+def isequal(a, b):
+	tol = 10**(-6)
+	return abs(a-b) <= tol
+	
+# 
+def isequalprice(a, b):
+
+	for i in range(len(a)):
+		if not isequal(a[i], b[i]):
+			return False
+	
+	#print("TRUEEEEEEEEEEEEEEEEEEEEEEE")	
+	return True
+	
+#
+def isequalcon(c, d):
+	return (c[0] == d[0]) and (c[1] == d[1]) and isequalprice(c[2], d[2])
 
 #
 def init(str):
