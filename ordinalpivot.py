@@ -73,6 +73,34 @@ def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	#ds.printbasis(newrmins, fb2col)
 	# Return
 	return clist, newc, newrmins
+
+
+def initordinalbasis(A, numf, numg, fb2col):
+
+	initOB = []
+	
+	# Find the first zeros non-slack col with respect the first row
+	numcol = len(A[0,:])
+
+	for colindex in range(numf+numg, numcol):
+		if A[0,colindex] == 0:
+			break
+	
+	print(colindex)	
+	for (f, b) in fb2col:
+		#print("key = " + str(key))
+		#print(value)
+		if  fb2col[(f,b)] == colindex:
+			break
+	
+	p = [0] * numg
+	c = (f, b, p)
+	
+	initOB.append(c)
+	for i in range(1, numf+numg):
+		initOB.append((-1*(i+1),(),[]))
+		
+	return c, initOB
 	
 #
 def removecon(clist, c):
