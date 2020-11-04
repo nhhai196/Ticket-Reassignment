@@ -48,9 +48,9 @@ print(clist)
 
 
 # Test cardinal pivot
-c = (1, bundlelist[1][1], [0,0])
-fbc = (c[0], c[1])
-print(fbc)
+#c = (1, bundlelist[1][1], [0,0])
+#fbc = (c[0], c[1])
+#print(fbc)
 
 b = [1 for i in range(3)]
 b = b + capacity
@@ -65,13 +65,9 @@ print(b)
 #a = np.zeros([5 * 10**3, 10**6])
 
 # Test ordinal pivot
-initOB = []
-initOB.append(c)
-for i in range(1, numF+numG):
-	initOB.append((-1*(i+1),(),[]))
-
 
 print("Init ordinal basis:")
+c, initOB = op.initordinalbasis(A, numF, numG, fb2col)
 print(initOB)
 
 rmins = op.getallrowmins(initOB, numF, bundle2rank)
@@ -103,6 +99,7 @@ for l in ordlist:
 
 start = time.time()
 eps = 0.1
+
 sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
 end = time.time()
 print(end - start)
