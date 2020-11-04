@@ -10,9 +10,9 @@ import correctness as cor
 # @fp		: famimy preferences
 # @rmins	: row min of the basis
 
-def ordinalpivot(clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
+def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	print("++++++++ Ordinal Pivot:")
-	eps = 0.25
+	#eps = 0.1
 	#budget = 3
 	numrows = len(clist)
 	

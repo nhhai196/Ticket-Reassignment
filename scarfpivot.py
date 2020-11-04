@@ -6,9 +6,10 @@ import numpy as np
 import cardinalpivot as cp
 import ordinalpivot as op
 import time
+import correctness as cor
 
 
-def scarfpivot(CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
+def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	print("+++++++++++++++++++++++++++++++++ Scarf Pivoting ++++++++++++++++++++++++++++++++++")
 	count = 0
 	while True:
@@ -23,9 +24,14 @@ def scarfpivot(CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 			print(b)
 			print(OB)
 			print("Card: done")
+			
+			if cor.isordbasis(eps, OB, numf, numg, fp, ordlist, fb2col, budget):
+				print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
+			else:
+				print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
 			break
 		
-		OB, c, rmins = op.ordinalpivot(OB, newc, rmins, numf, numg, fp, ordlist, fb2col, budget)
+		OB, c, rmins = op.ordinalpivot(eps, OB, newc, rmins, numf, numg, fp, ordlist, fb2col, budget)
 		
 		if (fb2col[ds.contract2fb(c)] == 0):
 			#x = np.linalg.solve(A,b)
