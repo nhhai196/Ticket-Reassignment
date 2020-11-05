@@ -29,6 +29,9 @@ def cardinalpivot(clist, c, A, b, fb2col):
 	
 	numrows = len(A)
 	numcols = len(A[0])
+	#print(numrows)
+	#print(numcols)
+	#print(b)
 	
 	# Index of the entering basic variable (added column)
 	# TODO: need a mapping from (family, bundle) to index
