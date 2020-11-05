@@ -52,7 +52,7 @@ print(clist)
 #fbc = (c[0], c[1])
 #print(fbc)
 
-b = [1 for i in range(3)]
+b = [1 for i in range(numF)]
 b = b + capacity
 print(b)
 

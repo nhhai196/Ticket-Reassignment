@@ -361,8 +361,8 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 					currminprice[g] = rmins[index][2][g] + eps
 					temp2 = bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf, diff)
 					
-					#print("temp1 =" + str(temp1))
-					#print("temp2 =" +str(temp2))
+					print("temp1 =" + str(temp1))
+					print("temp2 =" +str(temp2))
 					
 					if (temp1 == []) and (temp2 == []):
 						return []
@@ -372,7 +372,7 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 						return temp1
 					else:
 						tol = 10**(-6)
-						if not ds.isequalcon(temp1, temp2):
+						if not ds.isequalprice(temp1, temp2):
 							if (temp1[istar - numf] + tol >= temp2[istar-numf]):
 								return temp1
 							else:

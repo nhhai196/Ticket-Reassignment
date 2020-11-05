@@ -195,7 +195,8 @@ def isequal(a, b):
 	
 # 
 def isequalprice(a, b):
-
+	#print(a)
+	#print(b)
 	for i in range(len(a)):
 		if not isequal(a[i], b[i]):
 			return False
@@ -205,6 +206,8 @@ def isequalprice(a, b):
 	
 #
 def isequalcon(c, d):
+	#print("c =" +str(c))
+	#print("d =" +str(d))
 	return (c[0] == d[0]) and (c[1] == d[1]) and isequalprice(c[2], d[2])
 
 #
