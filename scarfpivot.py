@@ -23,6 +23,7 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 			print(CB)
 			print(b)
 			print(OB)
+			print(A)
 			print("Card: done")
 			
 			if cor.isordbasis(eps, OB, numf, numg, fp, ordlist, fb2col, budget):
