@@ -98,7 +98,7 @@ for l in ordlist:
 #print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
 
 start = time.time()
-eps = 0.2
+eps = 0.1
 
 sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
 end = time.time()
