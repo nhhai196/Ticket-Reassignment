@@ -36,7 +36,7 @@ def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 
 	# Find the row containing the old minimizer
 	istar = findoldminimizer(col2mins, rmins)
-	print("------------ Old minimizer istar = " + str(istar))
+	#print("------------ Old minimizer istar = " + str(istar))
 	#if istar >= numf:
 	#	print("***************************** Game case finally")
 		#return None
@@ -361,8 +361,8 @@ def findbestprice(eps, c, istar, rmins, numf, minprice, maxtms, budget, fbmins):
 					currminprice[g] = rmins[index][2][g] + eps
 					temp2 = bestprice(eps, istar, c[1], currminprice, gbtprice, budget + 1, budget, numf, diff)
 					
-					print("temp1 =" + str(temp1))
-					print("temp2 =" +str(temp2))
+					#print("temp1 =" + str(temp1))
+					#print("temp2 =" +str(temp2))
 					
 					if (temp1 == []) and (temp2 == []):
 						return []
