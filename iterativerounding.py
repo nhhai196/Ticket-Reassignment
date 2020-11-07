@@ -1,5 +1,6 @@
-#from scipy.optimize import linprog
+from scipy.optimize import linprog
 import datastructure as ds
+import numpy as np
 
 
 # A : the constraint matrix
@@ -8,6 +9,7 @@ import datastructure as ds
 # tol: tolerance for double-floating error
 
 def iterativerounding(A, x, b, tol, numf, numg):
+	A = list(map(list, A))
 	# Get the dimension
 	numcol = len(x)
 	
@@ -16,42 +18,55 @@ def iterativerounding(A, x, b, tol, numf, numg):
 	
 	# Find family binding constraints 
 	A_eq, A_ineq, numfeq, k, b_eq, b_ineq = fbindconstraints(A, x, b, tol, numf, numg)
+	print(A_eq)
+	print(A_ineq)
+	print(b_eq)
+	print(b_ineq)
+	print(numfeq)
 
 	# Objective function: minimize
 	v = [-1] * numcol
 	
 	# initialize a list for bookkeeping of x variables
-    xremainind = [i for i in range(numcol)]
-	
+	xremainind = [i for i in range(numcol)]
+	round = 1
 	while True:
+		print("++++++++++++ Round = " + str(round))
+		round += 1
+		
 		iind, xint, find, xfrac = seperateintfrac(x, tol)
 		
 		
 		if not find:				# integer solution
-			return x
+			print("Integral sol")
+			break
 				
 		if 	len(x) == len(xfrac):	# no integral entry 
 			print("No integral entry, eliminating a constraint")
 			## looking for a game constraint to delete
-			# igbind is the list of binding game constraints
 			xup = roundup(x, tol)
 			
-			inds, A_eq_g = gbindconstraints(A_ineq[k:], x[k:], b_ineq[k:], tol)
-			btemp = subtract(mul(A_eq_g, x), b_eq[numfeq:])
+			print(k)
+			#inds, A_eq_g = gbindconstraints(A_ineq[k:], xfrac, b_ineq[k:], tol)
+			#print(A_eq_g)
+			print(xup)
+			#btemp = subtract(mul(A_eq_g, xup), b_ineq[k:])
+			btemp = subtract(mul(A_ineq[k:], xup), b_ineq[k:])
 			
 			# greedy choice
-			elimind = btemp.index(min(btemp)) 
+			elimind = btemp.index(min(btemp))
+			elimind += k 
 			
 			# Delete the constraint 
-			A_eq.remove(A_eq[elimind])
-			b_eq.remove(b_eq[elimind])
+			A_ineq.remove(A_ineq[elimind])
+			b_ineq.remove(b_ineq[elimind])
 			
 		else:			# mixed integer and fractional sol
 			print("mixed soltion, fixing integral entries")
 			
 			## Update the linear program
 			# The objective coefficients
-			vint, v = partitionmatrix([v], iind)
+			vint, [v] = partitionmatrix([v], iind)
 			
 			#  For equality
 			A_eq_int, A_eq = partitionmatrix(A_eq, iind)
@@ -62,15 +77,35 @@ def iterativerounding(A, x, b, tol, numf, numg):
 			b_ineq = subtract(b_ineq, mul(A_ineq_int, xint))
 			
 			# Update remaining variables
-			xremainind = [i if i not in iind]
+			for i in iind:
+				xBar[xremainind[i]] = x[i]
+				
 			
+			temp = []
+			for i in find:
+				temp.append(xremainind[i])
+			
+			xremainind = temp 
+			print("remain indices:" + str(xremainind))
+			print(v)
+			print("A_eq = " + str(A_eq))
+			print("A_ineq = " + str(A_ineq))
+			print(b_eq)
+			print(b_ineq)
+
+		
 			
 		# Resolve the updated linear program	
-		x = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=A_eq, b_eq=b_eq, method='interior-point')	
+		res = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=A_eq, b_eq=b_eq, method='revised simplex')	
+		x = res['x']
 		
-		# Update the integral solution xBar
-		xBar = 
+		print("x = " + str(x))
 		
+	# Update the integral solution xBar
+	for i in iind:
+		xBar[xremainind[i]] = x[i]
+	
+	return xBar
 
 # Takes a solution x, and returns list of indicies i suct that x[i] is integal
 def seperateintfrac(x, tol):
@@ -160,8 +195,11 @@ def fbindconstraints(A, x, b, tol, numf, numg):
 			
 	return A_eq, A_ineq, numfeq, numfineq, b_eq, b_ineq
 
+
 # find game binding constraints	
 def gbindconstraints(A, x, b, tol):
+	print(A)
+	print(x)
 	temp = mul(A, x)
 	inds = []
 	A_eqg = []
@@ -173,7 +211,6 @@ def gbindconstraints(A, x, b, tol):
 	
 	return inds, A_eqg
 	
-	
-	
+		
 print(subtract([1,2], [-1, -2]))		
 #print(roundup([0.1, 0, 0.2], 10**(-6)))

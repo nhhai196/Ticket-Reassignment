@@ -6,6 +6,8 @@ import cardinalpivot as cp
 import ordinalpivot as op
 import scarfpivot as sp
 import time
+import numpy as np
+import iterativerounding as ir 
 
 #argv[1]: csv file name in the following format
 #row 1: number of families, number of games
@@ -98,8 +100,28 @@ for l in ordlist:
 #print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
 
 start = time.time()
-eps = 0.1
+eps = 0.5
 
-sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
+x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
+end = time.time()
+print(end - start)
+
+## Iterative Rounding
+# remove the slack variable
+start = time.time()
+print("+++++++++++++ Iterative Rounding +++++++++++++++++")
+
+numrow = numF + numG
+A = A[:, numrow:]
+print(A)
+print(b)
+realb = ir.mul(A, x)
+print(realb)
+
+tol = 10**(-6)
+
+xBar = ir.iterativerounding(A, x, b, tol, numF, numG)
+print("xBar = " + str(xBar))
+
 end = time.time()
 print(end - start)
