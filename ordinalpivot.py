@@ -72,7 +72,7 @@ def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	#print("New row mins:")
 	#ds.printbasis(newrmins, fb2col)
 	# Return
-	return clist, newc, newrmins
+	return clist, newc, newrmins, istar
 
 
 def initordinalbasis(A, numf, numg, fb2col):
