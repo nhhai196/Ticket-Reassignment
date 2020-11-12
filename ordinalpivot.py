@@ -4,6 +4,7 @@ import copy
 import functools as func
 import math
 import correctness as cor
+import time
 
 # @clist	: an ordinal basis
 # @c		: a column that will be added to the basis
@@ -169,8 +170,10 @@ def findoldminimizer(col2mins, rmins):
 # This is the most challenging function to write	
 def findcolmax(eps, newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist, fb2col, budget):
 	# TODO 
+	start = time.time()
 	fc, minprice, maxtms = getfeasiblecols(newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist, fb2col)
-	
+	end = time.time()
+	print(end - start)
 	# sort feasible columns in deceasing order of preferences
 	fc = sortorder(ordlist[istar], fc)
 	

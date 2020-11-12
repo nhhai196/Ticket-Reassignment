@@ -8,6 +8,7 @@ import scarfpivot as sp
 import time
 import numpy as np
 import iterativerounding as ir 
+import random
 
 #argv[1]: csv file name in the following format
 #row 1: number of families, number of games
@@ -27,15 +28,15 @@ numF, numG, bundle2rank, bundlelist, fb2col, budget, capacity, numcol, A = datas
 #numcol: number of columns for matrix A
 #A: the Scarf matrix of size (numF+numG) x numcol, columns are in alphabetic order
 
-print('numF: ' + str(numF))
-print('numG: ' + str(numG))
-print('bundle2rank:\n' + str(bundle2rank))
-print('bundlelist:\n' + str(bundlelist))
-print('fb2col:\n' + str(fb2col))
-print('budget: ' + str(budget))
-print('capacity: ' + str(capacity))
-print('numcol: ' + str(numcol))
-print('matrix A:\n' + str(A))
+#print('numF: ' + str(numF))
+#print('numG: ' + str(numG))
+#print('bundle2rank:\n' + str(bundle2rank))
+#print('bundlelist:\n' + str(bundlelist))
+#print('fb2col:\n' + str(fb2col))
+#print('budget: ' + str(budget))
+#print('capacity: ' + str(capacity))
+#print('numcol: ' + str(numcol))
+#print('matrix A:\n' + str(A))
 
 
 clist = [] #contract list
@@ -45,8 +46,8 @@ for i in range(numF):
 for i in range(numG):
 	clist.append((-1*(i+1+numF),(),[]))
 
-print("clist = ")
-print(clist)
+#print("clist = ")
+#print(clist)
 
 
 # Test cardinal pivot
@@ -54,9 +55,10 @@ print(clist)
 #fbc = (c[0], c[1])
 #print(fbc)
 
+#b = [random.randint(1,2) for i in range(numF)]
 b = [1 for i in range(numF)]
 b = b + capacity
-print(b)
+print("b =" + str(b))
 
 
 #newCB, oldc, newA, newb = cp.cardinalpivot(clist, c, A, b, fb2col)
@@ -70,22 +72,22 @@ print(b)
 
 print("Init ordinal basis:")
 c, initOB = op.initordinalbasis(A, numF, numG, fb2col)
-print(initOB)
+#print(initOB)
 
 rmins = op.getallrowmins(initOB, numF, bundle2rank)
-for i in range(len(rmins)):
-	print(rmins[i])
+#for i in range(len(rmins)):
+#	print(rmins[i])
 
 ordlist = datastructure.genordlist(A, numF, bundle2rank, bundlelist, fb2col)
 
 print("matrix A:")
-print(A)
+#print(A)
 print("ordlist:")
-print(ordlist)
+#print(ordlist)
 
 # ordlist in the form (f,b)
 col2fb = {value : key for (key, value) in fb2col.items()}
-print(col2fb)
+#print(col2fb)
 
 newordlist = []
 for l in ordlist:
@@ -100,7 +102,7 @@ for l in ordlist:
 #print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
 
 start = time.time()
-eps = 0.5
+eps = 0.2
 
 x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
 end = time.time()

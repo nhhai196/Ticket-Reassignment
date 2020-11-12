@@ -18,11 +18,11 @@ def iterativerounding(A, x, b, tol, numf, numg):
 	
 	# Find family binding constraints 
 	A_eq, A_ineq, numfeq, k, b_eq, b_ineq = fbindconstraints(A, x, b, tol, numf, numg)
-	print(A_eq)
-	print(A_ineq)
-	print(b_eq)
-	print(b_ineq)
-	print(numfeq)
+	#print(A_eq)
+	#print(A_ineq)
+	#print(b_eq)
+	#print(b_ineq)
+	#print(numfeq)
 
 	# Objective function: minimize
 	v = [-1] * numcol
@@ -30,6 +30,7 @@ def iterativerounding(A, x, b, tol, numf, numg):
 	# initialize a list for bookkeeping of x variables
 	xremainind = [i for i in range(numcol)]
 	round = 1
+	elim = 0;
 	while True:
 		print("++++++++++++ Round = " + str(round))
 		round += 1
@@ -55,7 +56,9 @@ def iterativerounding(A, x, b, tol, numf, numg):
 			
 			# greedy choice
 			elimind = btemp.index(min(btemp))
-			elimind += k 
+			elimind += k
+			
+			elim += 1
 			
 			# Delete the constraint 
 			A_ineq.remove(A_ineq[elimind])
@@ -87,11 +90,11 @@ def iterativerounding(A, x, b, tol, numf, numg):
 			
 			xremainind = temp 
 			print("remain indices:" + str(xremainind))
-			print(v)
-			print("A_eq = " + str(A_eq))
-			print("A_ineq = " + str(A_ineq))
-			print(b_eq)
-			print(b_ineq)
+			#print(v)
+			#print("A_eq = " + str(A_eq))
+			#print("A_ineq = " + str(A_ineq))
+			#print(b_eq)
+			#print(b_ineq)
 
 		
 			
@@ -105,7 +108,8 @@ def iterativerounding(A, x, b, tol, numf, numg):
 	for i in iind:
 		xBar[xremainind[i]] = x[i]
 	
-	return xBar
+	print("eliminated " + str(elim) + " constraints")
+	return roundint(xBar)
 
 # Takes a solution x, and returns list of indicies i suct that x[i] is integal
 def seperateintfrac(x, tol):
@@ -211,6 +215,9 @@ def gbindconstraints(A, x, b, tol):
 	
 	return inds, A_eqg
 	
-		
-print(subtract([1,2], [-1, -2]))		
+
+def roundint(x):
+	return [round(a) for a in x]
+	
+#print(subtract([1,2], [-1, -2]))		
 #print(roundup([0.1, 0, 0.2], 10**(-6)))
