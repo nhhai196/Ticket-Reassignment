@@ -1,6 +1,7 @@
 from scipy.optimize import linprog
 import datastructure as ds
 import numpy as np
+import math
 
 
 # A : the constraint matrix
@@ -18,11 +19,12 @@ def iterativerounding(A, x, b, tol, numf, numg):
 	
 	# Find family binding constraints 
 	A_eq, A_ineq, numfeq, k, b_eq, b_ineq = fbindconstraints(A, x, b, tol, numf, numg)
-	#print(A_eq)
-	#print(A_ineq)
+	print(len(A_eq))
+	print(len(A_ineq))
 	#print(b_eq)
 	#print(b_ineq)
 	#print(numfeq)
+	print("init k = " + str(k))
 
 	# Objective function: minimize
 	v = [-1] * numcol
@@ -47,7 +49,7 @@ def iterativerounding(A, x, b, tol, numf, numg):
 			## looking for a game constraint to delete
 			xup = roundup(x, tol)
 			
-			print(k)
+			print("k=" + str(k))
 			#inds, A_eq_g = gbindconstraints(A_ineq[k:], xfrac, b_ineq[k:], tol)
 			#print(A_eq_g)
 			print(xup)
@@ -62,6 +64,7 @@ def iterativerounding(A, x, b, tol, numf, numg):
 			
 			# Delete the constraint 
 			A_ineq.remove(A_ineq[elimind])
+			print(b_ineq[elimind])
 			b_ineq.remove(b_ineq[elimind])
 			
 		else:			# mixed integer and fractional sol
@@ -90,17 +93,37 @@ def iterativerounding(A, x, b, tol, numf, numg):
 			
 			xremainind = temp 
 			print("remain indices:" + str(xremainind))
-			#print(v)
-			#print("A_eq = " + str(A_eq))
-			#print("A_ineq = " + str(A_ineq))
-			#print(b_eq)
-			#print(b_ineq)
+			
+			# Clean up useless constraints
+			A_eq, b_eq = cleanupeq(A_eq, b_eq)
+			A_ineq, b_ineq, k = cleanupineq(A_ineq, b_ineq, k)
+			print("Check k = " + str(k))
+			
+			
+		#print(v)
+		print("A_eq = " + str(len(A_eq)))
+		print(b_eq)
+		
+		print("A_ineq = " + str(len(A_ineq)))
+		print(b_ineq)
 
+		# Resolve the updated linear program
+		if not A_eq and not A_ineq:
+			print("This case")
+			x = [0] * len(xremainind)
+		elif not A_eq and not b_eq:
+			res = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=None, b_eq=None, method='simplex')
+			x = res['x']
+		elif not A_ineq and not b_ineq:
+			res = linprog(v, A_ub=None, b_ub=None, A_eq=A_eq, b_eq=b_eq, method='simplex')
+			x = res['x']
+		else:
+			res = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=A_eq, b_eq=b_eq, method='simplex')
+			x = res['x']
 		
 			
-		# Resolve the updated linear program	
-		res = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=A_eq, b_eq=b_eq, method='revised simplex')	
-		x = res['x']
+			
+		
 		
 		print("x = " + str(x))
 		
@@ -134,7 +157,7 @@ def roundup(x, tol):
 	y = [0] * len(x)
 	for i in range(len(x)):
 		if x[i] > tol:
-			y[i] = 1
+			y[i] = math.ceil(x[i])
 		
 	return y
 	
@@ -152,6 +175,8 @@ def mul(A, x):
 
 # 
 def partitionmatrix(A, iind):
+	if len(A) == 0:
+		return [], []
 	numrow = len(A)
 	numcol = len(A[0])
 	
@@ -215,7 +240,44 @@ def gbindconstraints(A, x, b, tol):
 	
 	return inds, A_eqg
 	
-
+# clean up useless constraints
+def cleanupeq(A, b):
+	#if (A == None) or (b == None):
+	#	return None, None
+	
+	newA = []
+	newb = []
+	for row in range(len(A)):
+		if not allzeros(A[row]):
+			newA.append(A[row])
+			newb.append(b[row])
+			
+	return newA, newb
+	
+def cleanupineq(A, b, k):
+	#if (A == None) or (b == None):
+	#	return None, None, 0
+		
+	newA = []
+	newb = []
+	newk = k
+	for row in range(len(A)):
+		if not allzeros(A[row]):
+			newA.append(A[row])
+			newb.append(b[row])
+		elif row < k:
+			newk = newk - 1
+			
+	return newA, newb, newk 
+	
+def allzeros(x):
+	tol = 10**(-6)
+	for i in x:
+		if not (abs(i) <= tol):
+			return False
+			
+	return True
+	
 def roundint(x):
 	return [round(a) for a in x]
 	

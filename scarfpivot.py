@@ -47,8 +47,8 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 			print("Ord: done")
 			break
 		
-		if count == 10:
-			break
+		#if count == 10:
+		#	break
 		
 	#print("count = " + str(count))
 	print("fcount = " + str(fcount))

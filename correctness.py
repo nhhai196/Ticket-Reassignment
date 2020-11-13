@@ -76,5 +76,19 @@ def enumpriceall(eps, alpha, numg, budget):
 		allprices[i] = enumprice(eps, alpha[i], numg, budget[i])
 		
 	return allprices
+	
+## Functions for testing aproximate pseudo CE
+def ispseudoCE(x, p, eps, ):
+	tol = 10**(-6)
+	for xi in x:
+		if not abs(xi) <= tol: 	# positive value
+			if not isfoptimal(): 
+				return False
+				
+	return True
 
 
+def isfoptimal(f, p, eps, alpha, ordlist):
+	tol = 10**(-6)
+	temp = eps * sum(alpha)
+	

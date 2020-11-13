@@ -530,7 +530,7 @@ def getfeasiblecols(newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 	#fclist[newrm], minprice, maxtms = getfeasiblecolsone(newrm, rmins[newrm], ordlist[newrm], numf, minprice, maxtms, fclist[newrm])
 
 	#fclist[istar], minprice, maxtms = getfeasiblecolsone(istar, rmins[istar], ordlist[istar], numf, minprice, maxtms, fclist[istar])
-
+	
 	for row in range(len(rmins)):
 		if (row != istar):
 			fclist[row], minprice, maxtms = getfeasiblecolsone(row, rmins[row], ordlist[row], numf, minprice, maxtms, fb2col)
@@ -540,8 +540,16 @@ def getfeasiblecols(newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 	#print("List of feasible cols for each row = "+ str(fclist))
 
 	# Get the list of  feasible columns by intersecting all the list in fclist
-	fcols = func.reduce(intersection, fclist)
-
+	start = time.time()
+	#fcols = func.reduce(intersection, fclist)
+	#fcols = set.intersection(*map(set,fclist))
+	fcols = set(fclist[0]).intersection(*fclist[1:])
+	#print(fclist)
+	#fcols = myintersection(fclist)
+	#print(fcols)
+	end = time.time()
+	print("time = " + str(end - start))
+	#time.sleep(0.1)
 	return fcols, minprice, maxtms
 
 
@@ -599,5 +607,17 @@ def sortorder(sortedlist, sublist):
 def roundprice(p):
 	for i in range(len(p)):
 		p[i] = round(p[i],3)
+		
+# my list intersection
+def myintersection(list):
+	n = len(list)
+	if n == 0:
+		return []
+	elif n == 1:
+		return list[0]
+	else:
+		mid = int(round((n-1)/2))
+		return set(myintersection(list[0:mid])).intersection(*myintersection(list[mid+1:]))
+		
 		
 		
