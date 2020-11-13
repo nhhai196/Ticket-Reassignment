@@ -37,7 +37,7 @@ def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 
 	# Find the row containing the old minimizer
 	istar = findoldminimizer(col2mins, rmins)
-	#print("------------ Old minimizer istar = " + str(istar))
+	print("------------ Old minimizer istar = " + str(istar))
 	#if istar >= numf:
 	#	print("***************************** Game case finally")
 		#return None
@@ -47,7 +47,7 @@ def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	minprice = [0] * numg
 	maxtms = [0] * numf
 	fclist = [[]]* numrows
-	newc = findcolmax(eps, newrm, istar, newrmins, ordlist, numf, minprice, maxtms, fclist, fb2col, budget)
+	newc = findcolmax(eps, rmins, istar, newrmins, ordlist, numf, minprice, maxtms, fclist, fb2col, budget)
 
 	# Update the basis
 	clist.append(newc)
@@ -172,6 +172,9 @@ def findcolmax(eps, newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 	# TODO 
 	start = time.time()
 	fc, minprice, maxtms = getfeasiblecols(newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist, fb2col)
+	
+	#fc, minprice, maxtms = getfeasiblecolsOPT(newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist, fb2col)
+
 	end = time.time()
 	print(end - start)
 	# sort feasible columns in deceasing order of preferences
@@ -180,7 +183,7 @@ def findcolmax(eps, newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 	#print("--- Feasible cols = " + str(list(map(lambda x: fb2col[x], fc))))
 	#print(minprice)
 	#print(maxtms)
-	
+	print("fesible cols len = " + str(len(fc)))
 	fbmins = list(map(lambda x: (x[0], x[1]), rmins))
 	
 	
@@ -592,6 +595,79 @@ def getfeasiblecolsone(row, rmin, order, numf, minprice, maxtms, fb2col):
 	
 	#print("row = " + str(row) + ": " + "fc =" + str(list(map(lambda x: fb2col[x], fc))))
 	return fc, minprice, maxtms
+
+
+# Optimization
+def getfeasiblecolsOPT(newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist, fb2col):
+	temp =[]
+	
+	for row in range(len(rmins)):
+		if (row != istar):
+			fclist[row], minprice, maxtms = getinfeasiblecolsone(row, rmins[row], ordlist[row], numf, minprice, maxtms, fb2col)
+		if newrm[row][0] < 0:	# slack  
+			temp.append((newrm[row][0], newrm[row][1]))
+	#print("List of feasible cols for each row = "+ str(fclist))
+	fclist.remove(fclist[istar])
+	#print("List of feasible cols for each row = "+ str(fclist))
+
+	# Get the list of  feasible columns by intersecting all the list in fclist
+	start = time.time()
+	#fcols = func.reduce(intersection, fclist)
+	#fcols = set.intersection(*map(set,fclist))
+	fclist.append(temp)
+	infcols = set(fclist[0]).union(*fclist[1:])
+	#print("infcols = " + str(infcols))
+	fcols = set(fb2col.keys()).symmetric_difference(infcols)
+	#print(fclist)
+	#fcols = myintersection(fclist)
+	#print(set(fb2col.keys()))
+	#print((fcols))
+	end = time.time()
+	#print("time = " + str(end - start))
+	#time.sleep(0.1)
+	return fcols, minprice, maxtms
+	
+def getinfeasiblecolsone(row, rmin, order, numf, minprice, maxtms, fb2col):
+	#print("order = " + str(list(map(lambda x: fb2col[x], order))))
+	#print(order)
+	# Ignore the price of rmin
+	rm = (rmin[0], rmin[1])
+	#print(rm)
+	# Find the index of rm in the order
+	index = order.index(rm)
+	
+	fc = []
+	type = getcoltype(rmin, row, numf)
+	#print ("type = " + str(type) + " ", end ='')
+	if (type == 1):			# rmin can't be a non-active slack variable
+		print("getfeasiblecolsone: Something wrong!!!!!")
+	elif (type == 2):		# non-slack with zero coefficient
+		# Remove everying after the index, any price is OK
+		fc = order[index+1:]
+	elif (type == 3):		# non-slack with non-zero coefficient
+		#print("type 3")
+		if (row < numf):	# family case
+			#print("family case")
+			# Remove all the cols that is less preferred than rmin
+			fc = order[index+1:]
+			#print("index = " + str(index))
+			#print(order)
+			# the total money is at most ...
+			maxtms[row] = ds.dotproduct(rmin[1], rmin[2])
+		else:				# game case, price matters
+			#print("game case")
+			g = row - numf
+			fc = order[len(order) - 1]
+			# The price of game g is at least as expensive as the price of game g at rmin
+			minprice[g] = rmin[2][g]
+	else:					# active slack variable
+		#print("type 4")
+		fc = [] #order[len(order)-1]		# any col, any price is OK
+	
+	#print("row = " + str(row) + ": " + "fc =" + str(list(map(lambda x: fb2col[x], fc))))
+	return fc, minprice, maxtms
+	
+####
 
 #  list intersection
 def intersection(x, y):

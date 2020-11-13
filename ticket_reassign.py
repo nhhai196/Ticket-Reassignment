@@ -31,8 +31,8 @@ numF, numG, bundle2rank, bundlelist, fb2col, budget, capacity, numcol, A = datas
 #print('numF: ' + str(numF))
 #print('numG: ' + str(numG))
 #print('bundle2rank:\n' + str(bundle2rank))
-#print('bundlelist:\n' + str(bundlelist))
-#print('fb2col:\n' + str(fb2col))
+print('bundlelist:\n' + str(bundlelist))
+print('fb2col:\n' + str(fb2col))
 #print('budget: ' + str(budget))
 #print('capacity: ' + str(capacity))
 #print('numcol: ' + str(numcol))
@@ -55,8 +55,8 @@ for i in range(numG):
 #fbc = (c[0], c[1])
 #print(fbc)
 
-b = [random.randint(1,3) for i in range(numF)]
-#b = [1 for i in range(numF)]
+#b = [random.randint(1,3) for i in range(numF)]
+b = [1 for i in range(numF)]
 b = b + capacity
 print("b =" + str(b))
 
@@ -94,7 +94,8 @@ for l in ordlist:
 	temp = list(map(lambda x: col2fb[x], l))
 	newordlist.append(temp)
 
-#print(newordlist)
+print("new")
+print(newordlist)
 
 
 #clist, newc, newrmins = op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
@@ -102,7 +103,7 @@ for l in ordlist:
 #print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
 
 start = time.time()
-eps = 0.1
+eps = 0.2
 
 x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
 end = time.time()
