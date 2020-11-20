@@ -9,7 +9,7 @@ import time
 import correctness as cor
 
 
-def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
+def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, budget, budlist):
 	print("+++++++++++++++++++++++++++++++++ Scarf Pivoting ++++++++++++++++++++++++++++++++++")
 	count = 0
 	fcount = 0
@@ -53,7 +53,13 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 	#print("count = " + str(count))
 	print("fcount = " + str(fcount))
 	x = gotdomsol(CB, b, fb2col)
+	print(OB)
+	CEprice = getCEprice(OB, numg)
 	print("Dominating solution:" +str(x))
+	print("CE price = " + str(CEprice))
+	
+	# Sanity check
+	print(cor.ispseudoCE(x, CEprice, eps, fb2col, ordlist, budlist, numf, numg, budget))
 	return x
 
 # get the dominating solution from scarfpivot
@@ -68,4 +74,18 @@ def gotdomsol(basis, b, fb2col):
 		
 	return x[n:]
 	
+# get the CE price
+def getCEprice(OB, numg):
+	price = [0] * numg
+	for g in range(numg):
+		temp = []
+		for c in OB:
+			if not ds.isslack(c):
+				if c[1][g] > 0:	# positive coeff
+					temp.append(c[2][g])
+		
+		if 	len(temp) > 0:	
+			price[g] = min(temp)
+	
+	return price 
 	

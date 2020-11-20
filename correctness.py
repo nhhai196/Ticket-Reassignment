@@ -78,17 +78,49 @@ def enumpriceall(eps, alpha, numg, budget):
 	return allprices
 	
 ## Functions for testing aproximate pseudo CE
-def ispseudoCE(x, p, eps, ):
+def ispseudoCE(x, p, eps, fb2col, ordlist, budlist, numf, numg, budget):
 	tol = 10**(-6)
-	for xi in x:
+	for i in range(len(x)):
+		xi = x[i]
 		if not abs(xi) <= tol: 	# positive value
-			if not isfoptimal(): 
+			# get the bundle
+			for (f, s) in fb2col:
+				#print("key = " + str(key))
+				#print(value)
+				colindex = i + numf + numg
+				if  fb2col[(f, s)] == colindex:
+					break
+					
+			if not isfoptimal(f, s, p, eps, ordlist[f], budlist[f], budget[f]): 
 				return False
 				
 	return True
 
 
-def isfoptimal(f, p, eps, alpha, ordlist):
+def isfoptimal(f, s, p, eps, order, budlist, bf):
 	tol = 10**(-6)
-	temp = eps * sum(alpha)
+	temp = eps * sum(s)
+	temp = bf - temp
+	
+	index = order.index((f, s))
+	for c in budlist:
+		if isaffordable(c, p, temp):
+			oi = order.index((f,c))
+			if oi > index: 	# prefer some affordable bundle
+				return False
+				
+	# otherwise
+	return True
+		
+	
+def isaffordable(c, p, budget):
+	tol = 10**(-6)
+	money = ds.dotproduct(c, p)
+	if (abs(budget - money) <= tol):
+		return True
+	elif (money <= budget + tol):
+		return True
+	else:
+		return False
+		
 	

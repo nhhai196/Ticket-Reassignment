@@ -105,7 +105,7 @@ print(newordlist)
 start = time.time()
 eps = 0.2
 
-x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget)
+x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget, bundlelist)
 end = time.time()
 print(end - start)
 
