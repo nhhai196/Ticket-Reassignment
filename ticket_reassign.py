@@ -55,8 +55,8 @@ for i in range(numG):
 #fbc = (c[0], c[1])
 #print(fbc)
 
-#b = [random.randint(1,3) for i in range(numF)]
-b = [1 for i in range(numF)]
+b = [random.randint(1,3) for i in range(numF)]
+#b = [1 for i in range(numF)]
 b = b + capacity
 print("b =" + str(b))
 
@@ -103,7 +103,7 @@ print(newordlist)
 #print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
 
 start = time.time()
-eps = 0.2
+eps = 0.1
 
 x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget, bundlelist)
 end = time.time()

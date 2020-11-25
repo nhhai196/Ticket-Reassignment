@@ -106,7 +106,7 @@ def isfoptimal(f, s, p, eps, order, budlist, bf):
 	for c in budlist:
 		if isaffordable(c, p, temp):
 			oi = order.index((f,c))
-			if oi > index: 	# prefer some affordable bundle
+			if oi < index: 	# prefer some affordable bundle
 				return False
 				
 	# otherwise
