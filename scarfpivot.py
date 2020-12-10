@@ -14,46 +14,46 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 	count = 0
 	fcount = 0
 	while True:
-		print("============================= Round " + str(count +1) + " =============================")
+		#print("============================= Round " + str(count +1) + " =============================")
 		start = time.time()
 		CB, newc, A, b = cp.cardinalpivot(CB, c, A, b, fb2col)
 		count = count + 1
 		end = time.time()
-		print("card time : " + str(end - start))
+		#print("card time : " + str(end - start))
 		if (fb2col[ds.contract2fb(newc)] == 0):
 			#x = np.linalg.solve(A,b)
 			#print("!!!!!!!! x = " + str(x))
-			print(CB)
-			print(b)
-			print(OB)
-			print(A)
-			print("Card: done")
+			#print(CB)
+			#print(b)
+			#print(OB)
+			#print(A)
+			#print("Card: done")
 			
-			#if cor.isordbasis(eps, OB, numf, numg, fp, ordlist, fb2col, budget):
-			#	print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
-			#else:
-			#	print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
+			if cor.isordbasis(eps, OB, numf, numg, fp, ordlist, fb2col, budget):
+				print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
+			else:
+				print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
 			break
 		
 		start = time.time()
 		OB, c, rmins, istar = op.ordinalpivot(eps, OB, newc, rmins, numf, numg, fp, ordlist, fb2col, budget)
 		end = time.time()
-		print("ord time: " + str(end - start))
+		#print("ord time: " + str(end - start))
 		if (istar <numf):
 			fcount += 1
 		if (fb2col[ds.contract2fb(c)] == 0):
 			#x = np.linalg.solve(A,b)
 			#print("!!!!!!!! x = " + str(x))
-			print("Ord: done")
+			#print("Ord: done")
 			break
 		
 		#if count == 5:
 		#	break
 		
 	#print("count = " + str(count))
-	print("fcount = " + str(fcount))
+	#print("fcount = " + str(fcount))
 	x = gotdomsol(CB, b, fb2col)
-	print(OB)
+	#print(OB)
 	CEprice = getCEprice(OB, numg)
 	print("Dominating solution:" +str(x))
 	print("CE price = " + str(CEprice))

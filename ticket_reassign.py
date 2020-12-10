@@ -31,8 +31,8 @@ numF, numG, bundle2rank, bundlelist, fb2col, budget, capacity, numcol, A = datas
 #print('numF: ' + str(numF))
 #print('numG: ' + str(numG))
 #print('bundle2rank:\n' + str(bundle2rank))
-print('bundlelist:\n' + str(bundlelist))
-print('fb2col:\n' + str(fb2col))
+#print('bundlelist:\n' + str(bundlelist))
+#print('fb2col:\n' + str(fb2col))
 #print('budget: ' + str(budget))
 #print('capacity: ' + str(capacity))
 #print('numcol: ' + str(numcol))
@@ -94,8 +94,8 @@ for l in ordlist:
 	temp = list(map(lambda x: col2fb[x], l))
 	newordlist.append(temp)
 
-print("new")
-print(newordlist)
+#print("new")
+#print(newordlist)
 
 
 #clist, newc, newrmins = op.ordinalpivot(initOB, oldc, rmins, numF, numG, bundle2rank, newordlist, fb2col)
@@ -116,10 +116,10 @@ print("+++++++++++++ Iterative Rounding +++++++++++++++++")
 
 numrow = numF + numG
 A = A[:, numrow:]
-print(A)
-print(b)
+print("A= " + str(A))
+print("b = "+ str(b))
 realb = ir.mul(A, x)
-print(realb)
+#print(realb)
 
 tol = 10**(-6)
 
@@ -127,4 +127,4 @@ xBar = ir.iterativerounding(A, x, b, tol, numF, numG)
 print("xBar = " + str(xBar))
 
 end = time.time()
-print(end - start)
+print("Elapsed time = " + str(end - start))

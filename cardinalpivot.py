@@ -11,9 +11,9 @@ import datastructure as ds
 # @fb2col	: (family, bundle) to column index (of the constraint matrix)
 
 def cardinalpivot(clist, c, A, b, fb2col):
-	print("++++++++ Cardinal pivot:")
+	#print("++++++++ Cardinal pivot:")
 	#ds.printbasis(clist, fb2col)
-	print("----- Push in : " +str(c))
+	#print("----- Push in : " +str(c))
 	numf = len(clist)
 	# First check that if the contract (ignore the price vector) to add 
 	# already in the basis. If Yes, just add the new contract and remove 
@@ -22,7 +22,7 @@ def cardinalpivot(clist, c, A, b, fb2col):
 		tempc = clist[i]
 		if (tempc[0] == c[0] and tempc[1] == c[1]):
 			clist[i] = c
-			print("----- Kick out: " + str(tempc))
+			#print("----- Kick out: " + str(tempc))
 			#print(roundmatrix(A))
 			#print(roundvector(b))
 			return clist, tempc, A, b
@@ -72,7 +72,7 @@ def cardinalpivot(clist, c, A, b, fb2col):
 			newA[k, :] = A[k,:] - A[k,cindex] * newA[pivotrow, :]
 			newb[k] = b[k] - A[k,cindex] * newb[pivotrow]
 	
-	print("----- Kick out: " + str(oldc))
+	#print("----- Kick out: " + str(oldc))
 	#print(roundmatrix(newA))
 	#print("newb = " + str(roundvector(newb)))
 	return clist, oldc, newA, newb

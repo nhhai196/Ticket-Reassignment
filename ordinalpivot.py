@@ -12,7 +12,7 @@ import time
 # @rmins	: row min of the basis
 
 def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
-	print("++++++++ Ordinal Pivot:")
+	#print("++++++++ Ordinal Pivot:")
 	#eps = 0.1
 	#budget = 3
 	numrows = len(clist)
@@ -21,7 +21,7 @@ def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 	#ds.printbasis(rmins, fb2col)
 
 	# Remove column c from the basis
-	print("---- Kick out: " + str(c))
+	#print("---- Kick out: " + str(c))
 	#clist.remove(c)
 	removecon(clist, c)
 	
@@ -37,7 +37,7 @@ def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 
 	# Find the row containing the old minimizer
 	istar = findoldminimizer(col2mins, rmins)
-	print("------------ Old minimizer istar = " + str(istar))
+	#print("------------ Old minimizer istar = " + str(istar))
 	#if istar >= numf:
 	#	print("***************************** Game case finally")
 		#return None
@@ -51,7 +51,7 @@ def ordinalpivot(eps, clist, c, rmins, numf, numg, fp, ordlist, fb2col, budget):
 
 	# Update the basis
 	clist.append(newc)
-	print("---- Push in : " + str(newc) + " : " + str(fb2col[(newc[0], newc[1])]))
+	#print("---- Push in : " + str(newc) + " : " + str(fb2col[(newc[0], newc[1])]))
 
 	# Update row mins of the new basis
 	newrmins[istar] = newc
@@ -176,14 +176,14 @@ def findcolmax(eps, newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 	#fc, minprice, maxtms = getfeasiblecolsOPT(newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist, fb2col)
 
 	end = time.time()
-	print(end - start)
+	#print(end - start)
 	# sort feasible columns in deceasing order of preferences
 	fc = sortorder(ordlist[istar], fc)
 	
 	#print("--- Feasible cols = " + str(list(map(lambda x: fb2col[x], fc))))
 	#print(minprice)
 	#print(maxtms)
-	print("fesible cols len = " + str(len(fc)))
+	#print("fesible cols len = " + str(len(fc)))
 	fbmins = list(map(lambda x: (x[0], x[1]), rmins))
 	
 	
@@ -550,8 +550,8 @@ def getfeasiblecols(newrm, istar, rmins, ordlist, numf, minprice, maxtms, fclist
 	#print(fclist)
 	#fcols = myintersection(fclist)
 	#print(fcols)
-	end = time.time()
-	print("time = " + str(end - start))
+	#end = time.time()
+	#print("time = " + str(end - start))
 	#time.sleep(0.1)
 	return fcols, minprice, maxtms
 
