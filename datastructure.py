@@ -139,8 +139,8 @@ def weaklyprefer(a,b,row,numf, fp):
 		return True
 	else:
 		return strictlyprefer(a,b,row, numf,fp)
-		
-		
+
+
 # dot product of two vectors with the same length
 def dotproduct(x, y):
 	sum = 0
@@ -186,24 +186,24 @@ def iszerocoeff(a, row, numf):
 		return not(a[0] == row)
 	else:
 		return a[1][row - numf] == 0
-		
 
-# check if the same floating point values		
+
+# check if the same floating point values
 def isequal(a, b):
 	tol = 10**(-6)
 	return abs(a-b) <= tol
-	
-# 
+
+#
 def isequalprice(a, b):
 	#print(a)
 	#print(b)
 	for i in range(len(a)):
 		if not isequal(a[i], b[i]):
 			return False
-	
-	#print("TRUEEEEEEEEEEEEEEEEEEEEEEE")	
+
+	#print("TRUEEEEEEEEEEEEEEEEEEEEEEE")
 	return True
-	
+
 #
 def isequalcon(c, d):
 	#print("c =" +str(c))
@@ -239,7 +239,7 @@ def init(str):
                 item_count = 0
                 for item in row:
                     if item_count == 0:
-                        budget[line_count-1] = int(float(item)) #budget[f-1] denotes the budget of family f
+                        budget[line_count-1] = float(item) #budget[f-1] denotes the budget of family f
                         item_count = 1
                         bundle2rank.append({})
                         bundlelist.append([])
