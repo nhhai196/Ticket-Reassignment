@@ -171,9 +171,9 @@ def distmul(dist, num):
 
 ################# Testing
 numg = 6
-numf = 10
+numf = 1000
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numpref = 2
+numpref = 30
 minsize = 1
 
 gendata(numg, numf, fdist, numpref, minsize)	
