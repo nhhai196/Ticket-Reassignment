@@ -10,23 +10,30 @@ import numpy as np
 import iterativerounding as ir
 import random
 
-#argv[1]: csv file name in the following format
-#row 1: number of families, number of games
-#row f+1: budget, then decreasing preference order over bundles, of family f
-#row #family + 2: capacity of each game
-#the quantity in the bundle is the alpha (unscaled)
-#argv[2]: epsilon for price
+#argv[1]: xlsx file name in the following format
+#row 1: column labels: family preference / family size / num seniors / group size
+#row f+1: info of family f
+#argv[2]: budget of each senior, each non-senior has budget 1
+#argv[3]: seat offset for alpha
+#argv[4]: game capacity
+#argv[5]: upper bound for bundle size
+#argv[6]: epsilon for price
 
-numF, numG, bundle2rank, bundlelist, fb2col, budget, capacity, numcol, A = datastructure.init(sys.argv[1])
+#ex: python ticket_reassign_v2.py data.xlsx 1.2 2 100 3 0.1
+#ex: python ticket_reassign_v2.py data2.xlsx 1.2 2 30 3 0.1 this is slow, bundle size may matter a lot
+#ex: python ticket_reassign_v2.py data2.xlsx 1.2 2 30 2 0.1 this is fast
+
+numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist = datastructure.init_v2(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])),int(float(sys.argv[4])),int(float(sys.argv[5])))
 #numF: number of family
 #numG: number of games
 #bundle2rank: bundle maps to the rank, each family has one dictionary
 #bundlelist: preference list over bundles, each family has one list
 #fb2col: map (family,bundle) to the column index of matrix A
 #budget: budget[f-1] is the budget of family f
-#capacity: capacity[g-1] is the capacity of game g
 #numcol: number of columns for matrix A
 #A: the Scarf matrix of size (numF+numG) x numcol, columns are in alphabetic order
+#b: the capacity vector on RHS
+#plist: plist[f][j] denotes family f's j-th most favorite game
 
 print('numF: ' + str(numF))
 print('numG: ' + str(numG))
@@ -34,10 +41,9 @@ print('bundle2rank:\n' + str(bundle2rank))
 print('bundlelist:\n' + str(bundlelist))
 print('fb2col:\n' + str(fb2col))
 print('budget: ' + str(budget))
-print('capacity: ' + str(capacity))
 print('numcol: ' + str(numcol))
 print('matrix A:\n' + str(A))
-
+print('vector b:\n' + str(b))
 
 clist = [] #contract list
 for i in range(numF):
@@ -55,11 +61,10 @@ for i in range(numG):
 #fbc = (c[0], c[1])
 #print(fbc)
 
-b = [random.randint(1,3) for i in range(numF)]
+#b = [random.randint(1,3) for i in range(numF)]
 #b = [1 for i in range(numF)]
-b = b + capacity
-print("b =" + str(b))
-
+#b = b + capacity
+#print("b =" + str(b))
 
 #newCB, oldc, newA, newb = cp.cardinalpivot(clist, c, A, b, fb2col)
 #print(newCB)
@@ -80,9 +85,9 @@ rmins = op.getallrowmins(initOB, numF, bundle2rank)
 
 ordlist = datastructure.genordlist(A, numF, bundle2rank, bundlelist, fb2col)
 
-print("matrix A:")
+#print("matrix A:")
 #print(A)
-print("ordlist:")
+#print("ordlist:")
 #print(ordlist)
 
 # ordlist in the form (f,b)
@@ -103,9 +108,8 @@ for l in ordlist:
 #print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
 
 start = time.time()
-eps = 0.1
 
-x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget, bundlelist)
+x = sp.scarfpivot(float(sys.argv[6]), clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget, bundlelist)
 end = time.time()
 print(end - start)
 
