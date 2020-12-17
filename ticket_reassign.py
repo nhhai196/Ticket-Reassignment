@@ -39,6 +39,7 @@ print('numcol: ' + str(numcol))
 print('matrix A:\n' + str(A))
 
 
+
 clist = [] #contract list
 for i in range(numF):
 	clist.append((-1*(i+1),(),[]))
