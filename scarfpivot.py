@@ -32,10 +32,10 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 			#print(A)
 			#print("Card: done")
 
-			if cor.isordbasis(eps, OB, numf, numg, fp, ordlist, fb2col, budget):
-				print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
-			else:
-				print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
+			#if cor.isordbasis(eps, OB, numf, numg, fp, ordlist, fb2col, budget):
+			#	print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
+			#else:
+			#	print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
 			break
 
 		#start = time.time()
@@ -63,7 +63,7 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 	print("CE price = " + str(CEprice))
 
 	# Sanity check
-	print(cor.ispseudoCE(x, CEprice, eps, fb2col, ordlist, budlist, numf, numg, budget))
+	#print(cor.ispseudoCE(x, CEprice, eps, fb2col, ordlist, budlist, numf, numg, budget))
 	#print("Length of x = "  + str(len(x)))
 	return x
 
