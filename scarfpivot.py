@@ -14,7 +14,8 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 	count = 0
 	fcount = 0
 	while True:
-		#print("============================= Round " + str(count +1) + " =============================")
+		if (count%50 == 0):
+			print("============================= Round " + str(count +1) + " =============================")
 		start = time.time()
 		CB, newc, A, b = cp.cardinalpivot(CB, c, A, b, fb2col)
 		count = count + 1
