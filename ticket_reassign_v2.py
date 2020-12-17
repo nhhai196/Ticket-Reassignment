@@ -36,13 +36,18 @@ numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist = datas
 #b: the capacity vector on RHS
 #plist: plist[f][j] denotes family f's j-th most favorite game
 
-print('numF: ' + str(numF))
-print('numG: ' + str(numG))
-print('bundle2rank:\n' + str(bundle2rank))
-print('bundlelist:\n' + str(bundlelist))
-print('fb2col:\n' + str(fb2col))
+print("++++++++++++++++++++++++++++++++++++++ Data +++++++++++++++++++++++++++++++++++++")
+
+print('numF = ' + str(numF))
+print('numG = ' + str(numG))
+#print('bundle2rank:\n' + str(bundle2rank))
+#print('bundlelist:\n' + str(bundlelist))
+#print('fb2col:\n' + str(fb2col))
+print('numcol = ' + str(numcol))
+numrow = numF + numG
+print('numrow = ' + str(numrow))
+
 print('budget: ' + str(budget))
-print('numcol: ' + str(numcol))
 print('matrix A:\n' + str(A))
 print('vector b:\n' + str(b))
 
@@ -113,26 +118,28 @@ eps = float(sys.argv[6])
 
 x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget, bundlelist)
 end = time.time()
-print(end - start)
+print('Scarf elapsed time =' + str(end - start))
 
 ## Iterative Rounding
 # remove the slack variable
 start = time.time()
-print("+++++++++++++ Iterative Rounding +++++++++++++++++")
-
-numrow = numF + numG
 A = A[:, numrow:]
-print("A= " + str(A))
-print("b = "+ str(b))
-realb = ir.mul(A, x)
+#print("A= " + str(A))
+#print("b = "+ str(b))
+#realb = ir.mul(A, x)
 #print(realb)
 
 tol = 10**(-6)
 
 xBar = ir.iterativerounding(A, x, b, tol, numF, numG)
 print("xBar = " + str(xBar))
-print(len(xBar))
-print((plist))
+
+end = time.time()
+print("Rounding elapsed time = " + str(end - start))
+
+
+#print(len(xBar))
+#print((plist))
 
 
 ## Statistics
@@ -140,5 +147,4 @@ stat.statistics(xBar, numF, numG, fb2col, plist, budget)
 
 
 
-end = time.time()
-print("Elapsed time = " + str(end - start))
+

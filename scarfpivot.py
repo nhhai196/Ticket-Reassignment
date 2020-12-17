@@ -14,12 +14,12 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 	count = 0
 	fcount = 0
 	while True:
-		if (count%50 == 0):
-			print("============================= Round " + str(count +1) + " =============================")
-		start = time.time()
+		#if (count%50 == 0):
+		#	print("============================= Round " + str(count +1) + " =============================")
+		#start = time.time()
 		CB, newc, A, b = cp.cardinalpivot(CB, c, A, b, fb2col)
 		count = count + 1
-		end = time.time()
+		#end = time.time()
 		#print("card time : " + str(end - start))
 		if count % 100 ==99:
 			print("round "+str(count+1))
@@ -38,9 +38,9 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 				print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
 			break
 
-		start = time.time()
+		#start = time.time()
 		OB, c, rmins, istar = op.ordinalpivot(eps, OB, newc, rmins, numf, numg, fp, ordlist, fb2col, budget)
-		end = time.time()
+		#end = time.time()
 		#print("ord time: " + str(end - start))
 		if (istar <numf):
 			fcount += 1
@@ -58,7 +58,8 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 	x = gotdomsol(CB, b, fb2col)
 	#print(OB)
 	CEprice = getCEprice(OB, numg)
-	print("Dominating solution:" +str(x))
+	print("Found a dominating solution:")
+	print(roundint(x))
 	print("CE price = " + str(CEprice))
 
 	# Sanity check
@@ -92,3 +93,9 @@ def getCEprice(OB, numg):
 			price[g] = min(temp)
 
 	return price
+	
+def roundint(x):
+	ans = []
+	for i in x:
+		ans.append(round(i,2))
+	return ans
