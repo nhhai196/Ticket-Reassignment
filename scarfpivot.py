@@ -21,6 +21,8 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 		count = count + 1
 		end = time.time()
 		#print("card time : " + str(end - start))
+		if count % 100 ==99:
+			print("round "+str(count+1))
 		if (fb2col[ds.contract2fb(newc)] == 0):
 			#x = np.linalg.solve(A,b)
 			#print("!!!!!!!! x = " + str(x))
@@ -29,13 +31,13 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 			#print(OB)
 			#print(A)
 			#print("Card: done")
-			
+
 			if cor.isordbasis(eps, OB, numf, numg, fp, ordlist, fb2col, budget):
 				print("@@@@@@@@@@@@@@@@@@@@ Sanity check passed")
 			else:
 				print("@@@@@@@@@@@@@@@@@@@@ Sanity check failed")
 			break
-		
+
 		start = time.time()
 		OB, c, rmins, istar = op.ordinalpivot(eps, OB, newc, rmins, numf, numg, fp, ordlist, fb2col, budget)
 		end = time.time()
@@ -47,10 +49,10 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 			#print("!!!!!!!! x = " + str(x))
 			#print("Ord: done")
 			break
-		
+
 		#if count == 5:
 		#	break
-		
+
 	#print("count = " + str(count))
 	#print("fcount = " + str(fcount))
 	x = gotdomsol(CB, b, fb2col)
@@ -58,7 +60,7 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 	CEprice = getCEprice(OB, numg)
 	print("Dominating solution:" +str(x))
 	print("CE price = " + str(CEprice))
-	
+
 	# Sanity check
 	print(cor.ispseudoCE(x, CEprice, eps, fb2col, ordlist, budlist, numf, numg, budget))
 	return x
@@ -67,14 +69,14 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 def gotdomsol(basis, b, fb2col):
 	n = len(basis)
 	x = [0] * len(fb2col)
-	
+
 	for i in range(len(basis)):
 		fb = ds.contract2fb(basis[i])
 		ind = fb2col[fb]
 		x[ind] = b[i]
-		
+
 	return x[n:]
-	
+
 # get the CE price
 def getCEprice(OB, numg):
 	price = [0] * numg
@@ -84,9 +86,8 @@ def getCEprice(OB, numg):
 			if not ds.isslack(c):
 				if c[1][g] > 0:	# positive coeff
 					temp.append(c[2][g])
-		
-		if 	len(temp) > 0:	
+
+		if 	len(temp) > 0:
 			price[g] = min(temp)
-	
-	return price 
-	
+
+	return price
