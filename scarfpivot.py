@@ -63,6 +63,7 @@ def scarfpivot(eps, CB, OB, A, b, c, rmins, numf, numg, fp, ordlist, fb2col, bud
 
 	# Sanity check
 	print(cor.ispseudoCE(x, CEprice, eps, fb2col, ordlist, budlist, numf, numg, budget))
+	#print("Length of x = "  + str(len(x)))
 	return x
 
 # get the dominating solution from scarfpivot

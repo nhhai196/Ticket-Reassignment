@@ -9,6 +9,7 @@ import time
 import numpy as np
 import iterativerounding as ir
 import random
+import statistics as stat
 
 #argv[1]: xlsx file name in the following format
 #row 1: column labels: family preference / family size / num seniors / group size
@@ -108,8 +109,9 @@ for l in ordlist:
 #print(datastructure.weaklyprefer((1,(2,0),[0,0]), (1,(2,0),[0.5,0]), 1, numF, bundle2rank))
 
 start = time.time()
+eps = float(sys.argv[6])
 
-x = sp.scarfpivot(float(sys.argv[6]), clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget, bundlelist)
+x = sp.scarfpivot(eps, clist, initOB, A, b, c, rmins, numF, numG, bundle2rank, newordlist, fb2col, budget, bundlelist)
 end = time.time()
 print(end - start)
 
@@ -129,6 +131,14 @@ tol = 10**(-6)
 
 xBar = ir.iterativerounding(A, x, b, tol, numF, numG)
 print("xBar = " + str(xBar))
+print(len(xBar))
+print((plist))
+
+
+## Statistics
+stat.statistics(xBar, numF, numG, fb2col, plist, budget)
+
+
 
 end = time.time()
 print("Elapsed time = " + str(end - start))

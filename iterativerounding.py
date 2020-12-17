@@ -280,9 +280,9 @@ def allzeros(x):
 	return True
 	
 def roundint(x):
-	ans = copy.deepcopy(x)
+	ans = []
 	for i in x:
-		ans.append(round(i, 2))
+		ans.append(round(i))
 	return ans
 	
 #print(subtract([1,2], [-1, -2]))		

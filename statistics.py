@@ -1,5 +1,29 @@
 
 
+
+# 
+def statistics(x, numf, numg, fb2col, FP, famsize):
+	nmf = matchedfam(x)
+	print("nmf = " + str(nmf))
+	
+	nmp = matchedpeople(x, numf, numg, fb2col, famsize)
+	print("nmp = " + str(nmp))
+	
+	fbyng = countfambynumgames(x, numf, numg, fb2col)
+	print(fbyng)
+	
+	pbyng = countpeoplebynumgames(x, numf, numg, fb2col, famsize)
+	print(pbyng)
+	
+	fbypref = countfambypref(x, numf, numg, fb2col, FP)
+	print(fbypref)
+	
+	pbypref = countpeoplebypref(x, numf, numg, fb2col, FP, famsize)
+	print(pbypref)
+	
+	return 
+	
+	
 # count the number of matched families
 def matchedfam(x):
 	return sum(x)
@@ -7,12 +31,12 @@ def matchedfam(x):
 # count the number of matched people
 def matchedpeople(x, numf, numg, fb2col, famsize):
 	count = 0
-	for for i in range(len(x)):
+	for i in range(len(x)):
 		if x[i]> 0: 
-			f, b = ind2fb(i, fb2col, numf + numg)
-			count += size[f]
+			(f, b) = ind2fb(i, fb2col, numf + numg)
+			count += famsize[f]
 	
-	
+	return count 
 # count the number of families based on the number of games they get assigned
 def countfambynumgames(x, numf, numg, fb2col):
 	countlist = [0] * numg
@@ -27,7 +51,7 @@ def countfambynumgames(x, numf, numg, fb2col):
 	
 	
 # count the number of families based on the number of games they get assigned
-def countpeoplebynumgames(x, numf, numg, fb2col, famize):
+def countpeoplebynumgames(x, numf, numg, fb2col, famsize):
 	countlist = [0] * numg
 	
 	for i in range(len(x)):
@@ -45,9 +69,9 @@ def countfambypref(x, numf, numg, fb2col, FP):
 	for i in range(len(x)):
 		if x[i]> 0:
 			f, b = ind2fb(i, fb2col, numf + numg)
-			for g in b:
-				if g > 0:
-					countlist[FP[f][g] - 1] += 1
+			for j in range(len(b)):
+				if b[j] > 0:
+					countlist[FP[f][j] - 1] += 1
 					
 	return countlist
 	
@@ -58,17 +82,19 @@ def countpeoplebypref(x, numf, numg, fb2col, FP, famsize):
 	for i in range(len(x)):
 		if x[i]> 0:
 			f, b = ind2fb(i, fb2col, numf + numg)
-			for g in b:
-				if g > 0:
-					countlist[FP[f].index(g) - 1] += famsize[f]
+			for j in range(len(b)):
+				if b[j] > 0:
+					countlist[FP[f][j] - 1] += famsize[f]
 					
 	return countlist
 			
 def ind2fb(ind, fb2col, numrows):
+	#print('ind = ' + str(ind))
 	# offset by the number of rows 
-	for key, value in bundlelist.items:
-		if key == (ind + numrows):
-			return value
+	for key, value in fb2col.items():
+		if value == (ind + numrows):
+			#print('key = '  + str(key))
+			return key
 			
 			
 def getbundlesize(bundle):
