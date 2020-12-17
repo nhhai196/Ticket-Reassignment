@@ -3,6 +3,7 @@
 
 # 
 def statistics(x, numf, numg, fb2col, FP, famsize):
+	print("+++++++++++++++++++++++++++++++++++ Statistics +++++++++++++++++++++++++++++++++++++")
 	nmf = matchedfam(x)
 	print("nmf = " + str(nmf))
 	

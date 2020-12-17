@@ -10,6 +10,7 @@ import copy
 # tol: tolerance for double-floating error
 
 def iterativerounding(A, x, b, tol, numf, numg):
+	print("+++++++++++++++++++++++++++++++++ Iterative Rounding +++++++++++++++++++++++++++++++")
 	A = list(map(list, A))
 	# Get the dimension
 	numcol = len(x)
