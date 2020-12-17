@@ -1,109 +1,47 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%% Set Up Parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear, clc;
-global infinity numFams;
-
-
-numGames = 6;
-
+global infinity numf;
 infinity = 10^9;
 
-capacity = 57236;
+capacity = 20;
+mydir  = pwd;
+idcs   = strfind(mydir,filesep);
+newdir = mydir(1:idcs(end)-1);
 
-% Family size 
-S = (zeros(1, numFams));
-
-% Generate family size so that the average is 2.5
-%types = [0.2 0.3 0.35 0.1 0.05];
-types = [0.15 0.35 0.3 0.15 0.05];
-numFams = 10000;
-numtypes = (numFams * types);
-starti = 1;
-endi = numtypes(1);
-for i = 1:5
-    S(starti:endi) = i;
-    if (i < 5)
-        starti = starti + numtypes(i); 
-        endi = endi + numtypes(i+1);  
-    end
-end
+filename = strcat(newdir, '\data.xlsx');
+[numf, numg, FP, S, SE] = getdata(filename);
 
 % Club Ranking: uniformly random
-clubrank = randperm(numFams); % family: index - val : score
+clubrank = randperm(numf); % family: index - val : score
 
 % Generate ranking based on size first then club rank
-scrank = genSizePointRank(clubrank, S, numFams);
+scrank = genSizePointRank(clubrank, S, numf);
 
 % Number of seats needed for each family size
 alpha = [10 11 12 14 15];
 
-% Greedy based on John Purdue Club Points (ranking)
-% proposers = true(1, numFams);
-% matchrank = greedyRanking(proposers, clubrank, S, capacity, alpha);
-% 
-% matchedfamiliesrank = numMatchedFamilies(matchrank);
-% matchedseatsrank = numMatchedSeats(matchrank, S);
-% typesrank = countTypes(matchrank, S);
-
-
-% Greedy based on family size and then club rank
-% matchsize = greedySizeRank(proposers, scrank, S, capacity, alpha);
-% 
-% matchedfamiliessize = numMatchedFamilies(matchsize);
-% matchedseatssize = numMatchedSeats(matchsize, S);
-% typessize = countTypes(matchsize, S);
-
-% Hybrid
-% for i = 1:3
-%     frac = 0.25 * i;
-%     matchhybrid(i,:) = greedyHybrid(matchrank, matchsize, clubrank, scrank, S, capacity,frac, alpha);
-% 
-%     matchedfamilieshybrid(i) = numMatchedFamilies(matchhybrid(i, :));
-%     matchedseatshybrid(i) = numMatchedSeats(matchhybrid(i,:), S);
-%     typeshybrid(i,:) = countTypes(matchhybrid(i,:), S);
-% end
-
-% Save to file
-%filename = 'outputs.xlsx';
-%saveToFileOne(filename);
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Multiple Games %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Generate family preferences over games
-initpref = randperm(numGames);
-famPref = repmat(initpref, numFams, 1);
-
-% Randomly permute few pairs
-numswaps = 2; 
-for f = 1:numFams
-    if (numswaps > 0)
-        num = randi(numswaps);
-    
-        for r = 1:num
-            famPref(f, :) = swap(famPref(f, :), randi(numGames), randi(numGames));  
-        end
-    end
-end
 %%
 
 frac = 0.5;
-[matchrank6, proposed, C] = greedyMultipleGames(1, numFams, numGames, clubrank, scrank, famPref, S, capacity, frac, alpha);
+[matchrank6, proposed, C] = greedyMultipleGames(1, numf, numg, clubrank, scrank, FP, S, capacity, frac, alpha);
 
-[matchsize6, proposed, C] = greedyMultipleGames(2, numFams, numGames, clubrank, scrank, famPref, S, capacity, frac, alpha);
+[matchsize6, proposed, C] = greedyMultipleGames(2, numf, numg, clubrank, scrank, FP, S, capacity, frac, alpha);
 
-[matchhybrid1, proposed, C] = greedyMultipleGames(3, numFams, numGames, clubrank, scrank, famPref, S, capacity, 0.25, alpha);
+[matchhybrid1, proposed, C] = greedyMultipleGames(3, numf, numg, clubrank, scrank, FP, S, capacity, 0.25, alpha);
 
-[matchhybrid2, proposed, C] = greedyMultipleGames(3, numFams, numGames, clubrank, scrank, famPref, S, capacity, 0.5, alpha);
+[matchhybrid2, proposed, C] = greedyMultipleGames(3, numf, numg, clubrank, scrank, FP, S, capacity, 0.5, alpha);
 
-[matchhybrid3, proposed, C] = greedyMultipleGames(3, numFams, numGames, clubrank, scrank, famPref, S, capacity, 0.75, alpha);
+[matchhybrid3, proposed, C] = greedyMultipleGames(3, numf, numg, clubrank, scrank, FP, S, capacity, 0.75, alpha);
 
 
 %% 
-matching(:, 1:numGames) = matchrank6;
-matching(:, (1*numGames+1):(2*numGames)) = matchsize6;
-matching(:, (2*numGames+1):(3*numGames)) = matchhybrid1;
-matching(:, (3*numGames+1):(4*numGames)) = matchhybrid2;
-matching(:, (4*numGames+1):(5*numGames)) = matchhybrid3;
+matching(:, 1:numg) = matchrank6;
+matching(:, (1*numg+1):(2*numg)) = matchsize6;
+matching(:, (2*numg+1):(3*numg)) = matchhybrid1;
+matching(:, (3*numg+1):(4*numg)) = matchhybrid2;
+matching(:, (4*numg+1):(5*numg)) = matchhybrid3;
 
 %% Statistics multiple games
 
@@ -115,33 +53,33 @@ matchedsizes = countTypes(matching, S);
 matchedfams_avg = zeros(1, 5);
 matchedseats_avg = zeros(1, 5);
 matchedsizes_avg = zeros(5, 5);
-numGamesMatched = zeros(numGames, 5);
-numGamesMatchedPeople = zeros(numGames, 5);
+numgMatched = zeros(numg, 5);
+numgMatchedPeople = zeros(numg, 5);
 for i = 1:5
-    si = 1+(i-1)*numGames;
-    ei = i * numGames;
+    si = 1+(i-1)*numg;
+    ei = i * numg;
     matchedfams_avg(i) = round(mean(matchedfams(si:ei)));
     matchedseats_avg(i) = round(mean(matchedseats(si:ei)));
     matchedsizes_avg(:, i) = round(mean(matchedsizes(:, si:ei), 2));
-    numGamesMatched(:, i) = countMatchedGames(matching(:, si:ei));
-    numGamesMatchedPeople(:, i) = countMatchedGamesPeople(matching(:, si:ei), S);
+    numgMatched(:, i) = countMatchedGames(matching(:, si:ei));
+    numgMatchedPeople(:, i) = countMatchedGamesPeople(matching(:, si:ei), S);
 end
 
 % Preferences
-firstchoicefam = zeros(numGames, 5);
-firstchoiceppl = zeros(numGames, 5);
+firstchoicefam = zeros(numg, 5);
+firstchoiceppl = zeros(numg, 5);
 avg_matchedpref = zeros(1, 5);
-preffam = zeros(numGames, 5);
-prefppl = zeros(numGames, 5);
+preffam = zeros(numg, 5);
+prefppl = zeros(numg, 5);
 for i = 1:5
-    si = 1+(i-1)*numGames;
-    ei = i * numGames;
+    si = 1+(i-1)*numg;
+    ei = i * numg;
     currmatch = matching(:, si:ei);
-    firstchoicefam(:, i) = countBestChoiceFamily(currmatch, famPref);
-    firstchoiceppl(:, i) = countBestChoicePeople(currmatch, famPref, S);
-    avg_matchedpref(i) = averegeMatchedPref(currmatch, famPref);
-    preffam(:, i) = countPrefFamily(currmatch, famPref);
-    prefppl(:, i) = countPrefPeople(currmatch, famPref, S);
+    firstchoicefam(:, i) = countBestChoiceFamily(currmatch, FP);
+    firstchoiceppl(:, i) = countBestChoicePeople(currmatch, FP, S);
+    avg_matchedpref(i) = averegeMatchedPref(currmatch, FP);
+    preffam(:, i) = countPrefFamily(currmatch, FP);
+    prefppl(:, i) = countPrefPeople(currmatch, FP, S);
 end
 
 
@@ -150,25 +88,31 @@ end
 %% Save to file
 
 % Export Statistics
-filename = strcat('new-outputs-', int2str(numswaps), '-swaps-', int2str(numGames), '-games.xlsx');
+filename = strcat(newdir, '\outputs-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
+
+%t = xlsread(filename);
+%if ~isempty(t)
+%    xlswrite(filename,zeros(size(t))*nan);
+%end
+
 sheet = 1;
 
 xlRange = 'A1';
 xlswrite(filename, {'Family'}, sheet, xlRange);
-xlRange = 'A3:A10002';
-temp = (1:numFams)';
+xlRange = 'A3';
+temp = (1:numf)';
 xlswrite(filename, temp, sheet, xlRange);
 
 xlRange = 'B1';
 xlswrite(filename, {'Size'}, sheet, xlRange);
 
-xlRange = 'B3:B10002';
-xlswrite(filename, S', sheet, xlRange);
+xlRange = 'B3';
+xlswrite(filename, S, sheet, xlRange);
 
 xlRange = 'C1';
 xlswrite(filename, {'Club rank'}, sheet, xlRange);
 
-xlRange = 'C3:C10002';
+xlRange = 'C3';
 xlswrite(filename, clubrank', sheet, xlRange);
 
 xlRange = 'D1';
@@ -177,7 +121,7 @@ xlswrite(filename, {'Alg 1'}, sheet, xlRange);
 xlRange = 'D2:I2';
 xlswrite(filename, [{'G 1'}, {'G 2'} , {'G 3'}, {'G 4'}, {'G 5'}, {'G 6'}], sheet, xlRange);
 
-xlRange = 'D3:I10002';
+xlRange = 'D3';
 xlswrite(filename, int16(matchrank6), sheet, xlRange);
 
 xlRange = 'K1';
@@ -186,28 +130,28 @@ xlswrite(filename, {'Alg 2'}, sheet, xlRange);
 xlRange = 'K2:P2';
 xlswrite(filename, [{'G 1'}, {'G 2'} , {'G 3'}, {'G 4'}, {'G 5'}, {'G 6'}], sheet, xlRange);
 
-xlRange = 'K3:P10002';
+xlRange = 'K3';
 xlswrite(filename, int16(matchsize6), sheet, xlRange);
 
 xlRange = 'R1';
 xlswrite(filename, {'Hybrid 0.25'}, sheet, xlRange);
 xlRange = 'R2:W2';
 xlswrite(filename, [{'G 1'}, {'G 2'} , {'G 3'}, {'G 4'}, {'G 5'}, {'G 6'}], sheet, xlRange);
-xlRange = 'R3:W10002';
+xlRange = 'R3';
 xlswrite(filename, int16(matchhybrid1), sheet, xlRange);
 
 xlRange = 'Y1';
 xlswrite(filename, {'Hybrid 0.5'}, sheet, xlRange);
 xlRange = 'Y2:AD2';
 xlswrite(filename, [{'G 1'}, {'G 2'} , {'G 3'}, {'G 4'}, {'G 5'}, {'G 6'}], sheet, xlRange);
-xlRange = 'Y3:AD10002';
+xlRange = 'Y3';
 xlswrite(filename, int16(matchhybrid2), sheet, xlRange);
 
 xlRange = 'AF1';
 xlswrite(filename, {'Hybrid 0.75'}, sheet, xlRange);
 xlRange = 'AF2:AK2';
 xlswrite(filename, [{'G 1'}, {'G 2'} , {'G 3'}, {'G 4'}, {'G 5'}, {'G 6'}], sheet, xlRange);
-xlRange = 'AF3:AK10002';
+xlRange = 'AF3';
 xlswrite(filename, int16(matchhybrid3), sheet, xlRange);
 
 % Fam Preference
@@ -215,8 +159,8 @@ sheet = 2;
 xlRange = 'A1';
 xlswrite(filename, {'Family Preference'}, sheet, xlRange);
 
-xlRange = 'A2:F10001';
-xlswrite(filename, famPref, sheet, xlRange);
+xlRange = 'A2';
+xlswrite(filename, FP, sheet, xlRange);
 
 
 % Statistics
@@ -271,14 +215,14 @@ xlswrite(filename, {'number of families get i games'}, sheet, xlRange);
 xlRange = 'A23';
 xlswrite(filename, [{'1 games'}; {'2 games'} ; {'3 games'}; {'4 games'}; {'5 games'}; {'6 games'}], sheet, xlRange);
 xlRange = 'D23';
-xlswrite(filename, numGamesMatched, sheet, xlRange);
+xlswrite(filename, numgMatched, sheet, xlRange);
 
 xlRange = 'A31';
 xlswrite(filename, {'number of people get i games'}, sheet, xlRange);
 xlRange = 'A32';
 xlswrite(filename, [{'1 games'}; {'2 games'} ; {'3 games'}; {'4 games'}; {'5 games'}; {'6 games'}], sheet, xlRange);
 xlRange = 'D32';
-xlswrite(filename, numGamesMatchedPeople, sheet, xlRange);
+xlswrite(filename, numgMatchedPeople, sheet, xlRange);
 
 sheet = 4;
 xlRange = 'A1';
@@ -338,82 +282,86 @@ function count = countMatchedGamesPeople(match,S)
     end
 end
 
-function val = averegeMatchedPref(match, famPref)
+function val = averegeMatchedPref(match, FP)
     count = sum(sum(match));
-    val = sum(sum(famPref(match)))/count;
+    val = sum(sum(FP(match)))/count;
 end
-function count = countPrefFamily(match, famPref)
+function count = countPrefFamily(match, FP)
     [m, n] = size(match);
     count = zeros(1, n);
    
     for f = 1:m
         for g = 1:n
             if match(f,g)
-                p = famPref(f,g);
+                p = FP(f,g);
                 count(p) = count(p) + 1;
             end
         end
     end
 end
 
-function count = countPrefPeople(match, famPref, S)
+function count = countPrefPeople(match, FP, S)
     [m, n] = size(match);
     count = zeros(1, n);
    
     for f = 1:m
         for g = 1:n
             if match(f,g)
-                p = famPref(f,g);
+                p = FP(f,g);
                 count(p) = count(p) + S(f);
             end
         end
     end
 end
 
-function count = countBestChoiceFamily(match, famPref)
+function count = countBestChoiceFamily(match, FP)
     [m,n] = size(match);
     count = zeros(1, n);
     for f = 1: m
         ind = match(f,:);
-        val = min(famPref(f, ind));
-        if (val >=1 && val <= n)
-            count(val) = count(val) + 1;
+        val = min(FP(f, ind));
+        if ~isempty(val)
+            if (val >=1 && val <= n)
+                count(val) = count(val) + 1;
+            end
         end
     end
 end
 
-function count = countBestChoicePeople(match, famPref, S)
+function count = countBestChoicePeople(match, FP, S)
     [m,n] = size(match);
     count = zeros(1, n);
     for f = 1: m
         ind = match(f,:);
-        val = min(famPref(f, ind));
-        if (val >=1 && val <= n)
-            count(val) = count(val) + S(f);
+        val = min(FP(f, ind));
+        if ~isempty(val)
+            if (val >=1 && val <= n)
+                count(val) = count(val) + S(f);
+            end
         end
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-function [match, proposed, cap] = greedyMultipleGames(alg, numFams, numGames, clubrank, scrank, famPref, S, C, frac, alpha)
-match = false(numFams, numGames);
-proposed = false(numFams, numGames);
+function [match, proposed, cap] = greedyMultipleGames(alg, numf, numg, clubrank, scrank, FP, S, C, frac, alpha)
+match = false(numf, numg);
+proposed = false(numf, numg);
     
-cap = C * ones(1,numGames);
+cap = C * ones(1,numg);
 outerloop = 1;    
 while true
     fprintf('============ Outerloop = %d =================\n', outerloop);
     round = 1;
-    proposers = true(numFams,1);
-    tempMatch = false(numFams, numGames);
-    matchrank = zeros(numFams, 1);
+    proposers = true(numf,1);
+    tempMatch = false(numf, numg);
+    matchrank = zeros(numf, 1);
     
     while true
         fprintf("++++ Round = %d\n", round);
-        [currP, proposed] = familyPropose(proposed, famPref, proposers);
+        [currP, proposed] = familyPropose(proposed, FP, proposers);
         fprintf('total proposers: %d\n', sum(sum(currP >= 1)));
-        for g = 1:numGames
+        for g = 1:numg
             proposers = (currP == g);
             fprintf("%d families proposing to family %d\n", sum(proposers), g);
             if any(proposers)
@@ -449,7 +397,7 @@ while true
         end
         
         % Update Club Score
-        %[clubrank, scrank] = updateClubRank(clubrank, matchrank, S, numFams, numGames);
+        %[clubrank, scrank] = updateClubRank(clubrank, matchrank, S, numf, numg);
         
         round = round + 1;
     end
@@ -466,15 +414,15 @@ end
     
 end
 
-function [currP, proposed] = familyPropose(proposed, famPref, proposers)
-    global infinity numFams;
-    famPref(proposed) = infinity;
+function [currP, proposed] = familyPropose(proposed, FP, proposers)
+    global infinity numf;
+    FP(proposed) = infinity;
     
-    [~, currP] = min(famPref, [], 2);
+    [~, currP] = min(FP, [], 2);
     currP(currP == infinity) = 0;
     currP(~proposers) = 0;
     
-    for f = 1:numFams
+    for f = 1:numf
         if currP(f)
             proposed(f,currP(f)) = true;
         end
@@ -483,25 +431,25 @@ end
 
 % Modify the Club point ranking of the families, so that all the families 
 % that assigned to the low ranked games are now on top.
-function [clubrank, scrank] = updateClubRank(clubrank, matchrank, S, numFams, numGames)
+function [clubrank, scrank] = updateClubRank(clubrank, matchrank, S, numf, numg)
     fprintf('Updating clubrank \n');
     offset = max(clubrank) + 1;
     
     for f = 1:length(clubrank)
         if (matchrank(f) >= 1)
-            clubrank(f) = clubrank(f) + (numGames - matchrank(f))* offset;
+            clubrank(f) = clubrank(f) + (numg - matchrank(f))* offset;
         end
     end
     
-    scrank = genSizePointRank(clubrank, S, numFams);
+    scrank = genSizePointRank(clubrank, S, numf);
     
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function scrank = genSizePointRank(clubrank, S, numFams)
-    scrank = zeros(1, numFams);
-    for i = 1:numFams
-        scrank(i) = (5 - S(i)) * (numFams + 1) + clubrank(i);
+function scrank = genSizePointRank(clubrank, S, numf)
+    scrank = zeros(1, numf);
+    for i = 1:numf
+        scrank(i) = (5 - S(i)) * (numf + 1) + clubrank(i);
     end
 end
 
@@ -547,7 +495,7 @@ sheet = 1;
 xlRange = 'A1';
 xlswrite(filename, {'Family'}, sheet, xlRange);
 xlRange = 'A2:A10001';
-temp = (1:numFams)';
+temp = (1:numf)';
 xlswrite(filename, temp, sheet, xlRange);
 
 xlRange = 'B1';
