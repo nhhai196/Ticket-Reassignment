@@ -319,6 +319,7 @@ def init_v2(filename,sbud,extra,cap,ub):
     fb2col = {} #map (family,bundle) to the column index of matrix A
     pglist = [] #plist[f][j] denotes family f's j-th most favorite game
     blist = [] #blist[f-1] denotes the budget of family f
+    famsize = [] #famsize[f] denotes the size of family f
     numcol = 0
     b = []
 
@@ -334,6 +335,7 @@ def init_v2(filename,sbud,extra,cap,ub):
         snum = sheet.cell(row=i,column=gnum+4).value
         gsize = sheet.cell(row=i,column=gnum+6).value
         b.append(gsize)
+        famsize.append(fsize)
         item_count = 0
         for j in range(pow(2,gnum)-1, 0, -1):
             bundle = [0]*gnum
@@ -382,7 +384,7 @@ def init_v2(filename,sbud,extra,cap,ub):
                 game_count += 1
             col_count += 1
 
-    return fnum, gnum, bundle2rank, bundlelist, fb2col, blist, numcol, A, b, pglist
+    return fnum, gnum, bundle2rank, bundlelist, fb2col, blist, numcol, A, b, pglist, famsize
 
 #generate ordlist where ordlist[i] is the preference of row i over the column index w.r.t the C matrix (i is 0-based)
 def genordlist(A, numf, fp, bundlelist, fb2col):

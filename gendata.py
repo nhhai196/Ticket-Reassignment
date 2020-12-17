@@ -1,6 +1,7 @@
 import random
 from scipy import stats
 import numpy as np
+import copy
 
 import xlsxwriter
 
@@ -113,29 +114,27 @@ def genpreflist(numpref, numg):
 	preflist = list(set([tuple(np.random.permutation(temp)) for i in range(numpref)]))
 
 	return len(preflist), preflist
-	
+
 def genpreflistv2(numpref, numg, numswaps):
-	temp = [i for i in range(1, numg+1)]
-	fixpref = np.random.permutation(temp)
+	fixpref = np.random.permutation([i for i in range(1, numg+1)])
 	preflist = []
 	for i in range(numpref):
-		temp = fixpref
-		
+		temp = copy.copy(fixpref)
 		for j in range(numswaps):
 			pos1 = random.randint(0, numg-1)
 			pos2 = random.randint(0, numg-1)
-			temp = swapPositions(temp, pos1, pos2)
-		
+			temp[pos1], temp[pos2] = temp[pos2], temp[pos1]
+
 		preflist.append(tuple(temp))
-	
+
 	preflist = list(set(preflist))
 	return len(preflist), preflist
 
-def swapPositions(list, pos1, pos2): 
-      
-    list[pos1], list[pos2] = list[pos2], list[pos1] 
+def swapPositions(list, pos1, pos2):
+
+    list[pos1], list[pos2] = list[pos2], list[pos1]
     return list
-	
+
 # Uniform distribution
 def genprefcdf(numpref):
 	temp = [i for i in range(numpref+1)]
@@ -197,11 +196,11 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-swap-1.xlsx'
+filename = 'data2-swap.xlsx'
 numg = 6
-numf = 20
+numf = 50
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numpref = 2
+numpref = 1000
 minsize = 1
-numswaps = 1
+numswaps = 2
 gendata(filename, numg, numf, fdist, numpref, minsize, numswaps)

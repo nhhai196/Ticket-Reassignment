@@ -24,7 +24,7 @@ import statistics as stat
 #ex: python ticket_reassign_v2.py data2.xlsx 1.2 2 30 3 0.1 this is slow, bundle size may matter a lot
 #ex: python ticket_reassign_v2.py data2.xlsx 1.2 2 30 2 0.1 this is fast
 
-numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist = datastructure.init_v2(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])),int(float(sys.argv[4])),int(float(sys.argv[5])))
+numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist, famsize = datastructure.init_v2(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])),int(float(sys.argv[4])),int(float(sys.argv[5])))
 #numF: number of family
 #numG: number of games
 #bundle2rank: bundle maps to the rank, each family has one dictionary
@@ -35,6 +35,7 @@ numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist = datas
 #A: the Scarf matrix of size (numF+numG) x numcol, columns are in alphabetic order
 #b: the capacity vector on RHS
 #plist: plist[f][j] denotes family f's j-th most favorite game
+#famsize: famsize[f] denotes the size of family f
 
 print("++++++++++++++++++++++++++++++++++++++ Data +++++++++++++++++++++++++++++++++++++")
 
@@ -143,8 +144,4 @@ print("Rounding elapsed time = " + str(end - start))
 
 
 ## Statistics
-stat.statistics(xBar, numF, numG, fb2col, plist, budget)
-
-
-
-
+stat.statistics(xBar, numF, numG, fb2col, plist, famsize)
