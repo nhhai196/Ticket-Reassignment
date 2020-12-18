@@ -93,7 +93,7 @@ def getCEprice(OB, numg):
 			price[g] = min(temp)
 
 	return price
-	
+
 def roundint(x):
 	ans = []
 	for i in x:

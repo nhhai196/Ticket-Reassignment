@@ -20,9 +20,9 @@ import statistics as stat
 #argv[5]: upper bound for bundle size
 #argv[6]: epsilon for price
 
-#ex: python ticket_reassign_v2.py data.xlsx 1.2 2 100 3 0.1
-#ex: python ticket_reassign_v2.py data2.xlsx 1.2 2 30 3 0.1 this is slow, bundle size may matter a lot
-#ex: python ticket_reassign_v2.py data2.xlsx 1.2 2 30 2 0.1 this is fast
+#ex: python ticket_reassign_v2.py data3-swap.xlsx 1.2 4 150 3 0.1 // with duplicates, 3X00 rounds?
+#ex: python ticket_reassign_v2.py data3-swap.xlsx 1.2 2 150 3 0.05 // with duplicates, 5500 rounds
+#ex: python ticket_reassign_v2.py data4-swap.xlsx 1.2 3 2000 3 0.1 // with duplicates, 8300 rounds
 
 numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist, famsize = datastructure.init_v2(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])),int(float(sys.argv[4])),int(float(sys.argv[5])))
 #numF: number of family

@@ -196,11 +196,11 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data2-swap.xlsx'
+filename = 'data4-swap.xlsx'
 numg = 6
-numf = 50
+numf = 1000
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numpref = 1000
+numpref = 10
 minsize = 1
-numswaps = 2
+numswaps = 1
 gendata(filename, numg, numf, fdist, numpref, minsize, numswaps)
