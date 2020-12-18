@@ -144,4 +144,6 @@ print("Rounding elapsed time = " + str(end - start))
 
 
 ## Statistics
-stat.statistics(xBar, numF, numG, fb2col, plist, famsize)
+filename = 'outputs-1000-families-6-games.xlsx'
+print(b)
+stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize)

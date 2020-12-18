@@ -6,7 +6,7 @@ import copy
 import xlsxwriter
 
 
-def gendata(filename, numg, numf, fdist, numpref, minsize, numswaps):
+def gendata(filename, numg, numf, fdist, numpref, minsize, numswaps, seatoffset):
 
 	numpref, preflist = genpreflistv2(numpref, numg, numswaps)
 	prefcdf = genprefcdf(numpref)
@@ -55,8 +55,17 @@ def gendata(filename, numg, numf, fdist, numpref, minsize, numswaps):
 		wb.write(row, numg + 3, key[1])
 		wb.write(row, numg + 5, len(value))
 		row += 1
+	
+	
+	wb = workbook.add_worksheet()
+	wb.write(0, 0, 'Capacity')
+	wb.write(0, 1, 'Alpha')
+	wb.write(1, 0, round(numf * 2.5))	# Hardcode here
+	for i in range(numg):
+		wb.write(1, i+1, i+1+seatoffset)
+		
 	workbook.close()
-
+	
 	#print(np.random.permutation([i for i in range(1,6)]))
 
 
@@ -196,11 +205,12 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data4-swap.xlsx'
+filename = 'data-swap1.xlsx'
 numg = 6
-numf = 1000
+numf = 100
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
 numpref = 10
 minsize = 1
 numswaps = 1
-gendata(filename, numg, numf, fdist, numpref, minsize, numswaps)
+seatoffset = 7
+gendata(filename, numg, numf, fdist, numpref, minsize, numswaps, seatoffset)
