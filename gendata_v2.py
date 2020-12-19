@@ -6,15 +6,15 @@ import copy
 import xlsxwriter
 
 
-def gendata(filename, numg, numf, fdist, numpref, minsize, numswaps, seatoffset):
+def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset):
 
-	numpref, preflist = genpreflistv2(numpref, numg, numswaps)
-	prefcdf = genprefcdf(numpref)
-	print(preflist)
+	numscore, scorelist = genscorelist(numscore, numg )
+	prefcdf = genprefcdf(numscore)
+	print(scorelist)
 	print(prefcdf)
 
 
-	famdict = genfam(numf, fdist, minsize, preflist, prefcdf)
+	famdict = genfam(numf, fdist, minsize, scorelist, prefcdf)
 	group = groupfamily(famdict)
 
 	print(group)
@@ -117,12 +117,19 @@ def gensenior(famdict):
 
 	return famdict
 
+# random score over games
+def randomscore(numg):
+	score = [0] * numg
+	for i in range(numg):
+		score[i] = round(random.uniform(0.2, 1), 2)
+		
+	return score
 
-def genpreflist(numpref, numg):
-	temp = [i for i in range(1, numg+1)]
-	preflist = list(set([tuple(np.random.permutation(temp)) for i in range(numpref)]))
+def genscorelist(numscore, numg):
+	
+	scorelist = list(set([tuple(randomscore(numg)) for i in range(numscore)]))
 
-	return len(preflist), preflist
+	return len(scorelist), scorelist
 
 def genpreflistv2(numpref, numg, numswaps):
 	fixpref = np.random.permutation([i for i in range(1, numg+1)])
@@ -163,7 +170,7 @@ def genpref(famdict, plist, prefcdf):
 
 
 
-
+# gen a random pref based in preference cdf 
 def randompref(pcdf):
 	rnum = random.uniform(0,1)
 
@@ -205,12 +212,12 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-swap-big.xlsx'
+filename = 'data-cardinal.xlsx'
 numg = 6
-numf = 2000
+numf = 200
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numpref = 15
+numscore = 5
 minsize = 1
 numswaps = 1
 seatoffset = 7
-gendata(filename, numg, numf, fdist, numpref, minsize, numswaps, seatoffset)
+gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset)
