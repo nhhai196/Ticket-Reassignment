@@ -4,13 +4,12 @@ clear, clc;
 global infinity numf;
 infinity = 10^9;
 
-capacity = 20;
 mydir  = pwd;
 idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
 
-filename = strcat(newdir, '\data.xlsx');
-[numf, numg, FP, S, SE] = getdata(filename);
+filename = strcat(newdir, '\data-swap-big.xlsx');
+[numf, numg, FP, S, SE, alpha, capacity] = getdata(filename);
 
 % Club Ranking: uniformly random
 clubrank = randperm(numf); % family: index - val : score
@@ -19,7 +18,7 @@ clubrank = randperm(numf); % family: index - val : score
 scrank = genSizePointRank(clubrank, S, numf);
 
 % Number of seats needed for each family size
-alpha = [10 11 12 14 15];
+%alpha = [10 11 12 14 15];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Multiple Games %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -88,7 +87,7 @@ end
 %% Save to file
 
 % Export Statistics
-filename = strcat(newdir, '\outputs-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
+filename = strcat(newdir, '\new-outputs-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
 
 %t = xlsread(filename);
 %if ~isempty(t)
