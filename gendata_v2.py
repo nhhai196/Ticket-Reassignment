@@ -8,11 +8,10 @@ import xlsxwriter
 
 def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset):
 
-	numscore, scorelist = genscorelist(numscore, numg )
+	numscore, scorelist = genscorelist(numscore, numg, numswaps)
 	prefcdf = genprefcdf(numscore)
 	print(scorelist)
 	print(prefcdf)
-
 
 	famdict = genfam(numf, fdist, minsize, scorelist, prefcdf)
 	group = groupfamily(famdict)
@@ -121,13 +120,25 @@ def gensenior(famdict):
 def randomscore(numg):
 	score = [0] * numg
 	for i in range(numg):
-		score[i] = round(random.uniform(0.2, 1), 2)
+		score[i] = round(random.uniform(0.2, 1), 4)
 		
 	return score
 
-def genscorelist(numscore, numg):
+def genscorelist(numscore, numg, numswaps):
+	fewscore = 3
 	
-	scorelist = list(set([tuple(randomscore(numg)) for i in range(numscore)]))
+	smallslist = [randomscore(numg) for i in range(fewscore)]
+	scorelist = []
+	for i in range(numscore):
+		temp = copy.copy(smallslist[random.randint(0,fewscore-1)])
+		for j in range(numswaps):
+			pos1 = random.randint(0, numg-1)
+			pos2 = random.randint(0, numg-1)
+			temp[pos1], temp[pos2] = temp[pos2], temp[pos1]
+
+		scorelist.append(tuple(temp))
+
+	scorelist = list(set(scorelist))
 
 	return len(scorelist), scorelist
 
