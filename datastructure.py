@@ -339,7 +339,7 @@ def init_v2(filename,sbud,extra,cap,ub):
         item_count = 0
         for j in range(pow(2,gnum)-1, 0, -1):
             bundle = [0]*gnum
-            bilist = [int(i) for i in list('{0:0b}'.format(j))]
+            bilist = [int(k) for k in list('{0:0b}'.format(j))]
             if sum(bilist) <= ub:
                 bisize = len(bilist)
                 for k in range(0,gnum-bisize):
@@ -352,6 +352,82 @@ def init_v2(filename,sbud,extra,cap,ub):
                 bundle2rank[i-2][inttuple] = item_count+1 #bundle2rank[f-1] maps from a tuple bundle to rank for family f
                 bundlelist[i-2].append(inttuple)
                 item_count += 1
+        blist.append(fsize-snum + snum*sbud)
+        unsortedlist.sort()
+        sortedbundle.append(unsortedlist)
+        for item in unsortedlist:
+            inttuple = tuple(item)
+            fb2col[(i-2,inttuple)] = fnum + gnum + numcol
+            numcol += 1
+    b = b + [cap]*gnum
+    #initialization and create slack contracts
+    numF = fnum
+    numG = gnum
+    A = numpy.zeros((numF+numG,numF+numG+numcol))
+    for i in range(numF):
+#    clist.append((-1*(i+1),[],[]))
+        fb2col[(-1*(i+1), ())] = i
+        A[i,i] = 1
+
+    for i in range(numG):
+#    clist.append((-1*(i+1+numF),[],[]))
+        fb2col[(-1*(i+1+numF), ())] = i+numF
+        A[i+numF,i+numF] = 1
+
+    col_count = numF + numG
+    for i in range(numF):
+        for j in sortedbundle[i]:
+            A[i, col_count] = 1
+            game_count = 0
+            for k in j:
+                A[numF + game_count, col_count] = k
+                game_count += 1
+            col_count += 1
+
+    return fnum, gnum, bundle2rank, bundlelist, fb2col, blist, numcol, A, b, pglist, famsize
+
+def init_v3(filename,sbud,cap):
+
+    book = op.load_workbook(filename)
+    sheet = book.get_sheet_by_name("Sheet2")
+    row_num = sheet.max_row
+    col_num = sheet.max_column
+    gnum = 0
+    fnum = row_num-1
+    for j in range(1,col_num):
+        if sheet.cell(row=2,column=j).value:
+            gnum += 1
+        else:
+            break
+
+    bundle2rank = [] #bundle maps to the rank, each family has one dictionary
+    bundlelist = [] #preference list over bundles, each family has one list
+    sortedbundle = [] #bundle of interest in incearsing alphabetic order, each family has one
+    fb2col = {} #map (family,bundle) to the column index of matrix A
+    pglist = [] #plist[f][j] denotes family f's j-th most favorite game
+    blist = [] #blist[f-1] denotes the budget of family f
+    famsize = [] #famsize[f] denotes the size of family f
+    numcol = 0
+    b = []
+
+    for i in range(2,row_num+1): #family i-2
+        bundle2rank.append({})
+        bundlelist.append([])
+        unsortedlist = []
+        fsize = sheet.cell(row=i,column=gnum+2).value
+        snum = sheet.cell(row=i,column=gnum+4).value
+        gsize = sheet.cell(row=i,column=gnum+6).value
+        b.append(gsize)
+        famsize.append(fsize)
+        item_count = 0
+        for j in range(gnum+8,col_num):
+            item = sheet.cell(row=i,column=j).value
+            intlist = [int(float(i)) for i in item.split(',')] #convert string to int
+            unsortedlist.append(intlist)
+            inttuple = tuple(intlist)
+            bundle2rank[i-2][inttuple] = item_count #bundle2rank[f-1] maps from a tuple bundle to rank for family f
+            bundlelist[i-2].append(inttuple)
+            item_count += 1
         blist.append(fsize-snum + snum*sbud)
         unsortedlist.sort()
         sortedbundle.append(unsortedlist)

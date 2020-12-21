@@ -6,17 +6,17 @@ import copy
 import xlsxwriter
 
 
-def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset):
+def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize):
 
 	numscore, scorelist = genscorelist(numscore, numg, numswaps)
 	prefcdf = genprefcdf(numscore)
-	print(scorelist)
-	print(prefcdf)
+#	print(scorelist)
+#	print(prefcdf)
 
 	famdict = genfam(numf, fdist, minsize, scorelist, prefcdf)
 	group = groupfamily(famdict)
 
-	print(group)
+#	print(group)
 
 	workbook = xlsxwriter.Workbook(filename)
 	wb = workbook.add_worksheet()
@@ -25,18 +25,24 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 	wb.write(0, 0, 'Family Preference')
 	wb.write(0, numg + 1, 'Family Size')
 	wb.write(0, numg+ 3, 'Num Seniors')
+	wb.write(0, numg + 5, 'Family Bundle Preference')
 
 	row = 1
 	for value in famdict.values():
-		print(value)
+#		print(value)
 		temp = value[2]
-		print(temp)
+#		print(temp)
 		for col in range(numg):
 			#print(temp[col])
 			wb.write(row, col, temp[col])
 
 		wb.write(row, numg + 1, value[0])
 		wb.write(row, numg + 3, value[1])
+
+		sblist = genblist(value, maxbsize, seatoffset)
+		for i in range(len(sblist)):
+			wb.write(row, numg + 5 + i, ",".join(map(str, sblist[i][1])))
+
 		row += 1
 
 	wb = workbook.add_worksheet()
@@ -45,6 +51,7 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 	wb.write(0, numg + 1, 'Family Size')
 	wb.write(0, numg + 3, 'Num Seniors')
 	wb.write(0, numg + 5, 'Group Size')
+	wb.write(0, numg + 7, 'Family Bundle Preference')
 
 	row = 1
 	for key, value in group.items():
@@ -53,15 +60,27 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 		wb.write(row, numg + 1, key[0])
 		wb.write(row, numg + 3, key[1])
 		wb.write(row, numg + 5, len(value))
+		sblist = genblist(key, maxbsize, seatoffset)
+		for i in range(len(sblist)):
+			wb.write(row, numg + 7 + i, ",".join(map(str, sblist[i][1])))
 		row += 1
-
 
 	wb = workbook.add_worksheet()
 	wb.write(0, 0, 'Capacity')
 	wb.write(0, 1, 'Alpha')
-	wb.write(1, 0, round(numf * 2.5))	# Hardcode here
-	for i in range(numg):
+	wb.write(1, 0, round(numf * 2.5))	# Hardcode here for capacity
+	for i in range(len(fdist)):
 		wb.write(1, i+1, i+1+seatoffset)
+
+#	wb = workbook.add_worksheet()
+#	wb.write(0, 0, 'Family Preference')
+
+#	row = 1
+#	for value in famdict.values():
+#		sblist = genblist(value, maxbsize, seatoffset)
+#		for i in range(len(sblist)):
+#			wb.write(row, i, ",".join(map(str, sblist[i][1])))
+#		row += 1
 
 	workbook.close()
 
@@ -72,7 +91,24 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 
 	return famdict, group
 
-
+def genblist(value, ub, extra):
+	n = len(value[2])
+	sblist = []
+	for i in range(2**n-1, 0, -1):
+		score = 0
+		bundle = [0]*n
+		bilist = [int(j) for j in list('{0:0b}'.format(i))]
+		if sum(bilist) <= ub:
+			bisize = len(bilist)
+			for j in range(0,n-bisize):
+				bilist.insert(0,0)
+			for j in range(0,n):
+				if bilist[j]==1:
+					bundle[j] = value[0] + extra
+					score = score + value[2][j]
+			sblist.append([score, bundle])
+	sblist.sort(key = lambda x: x[0], reverse=True)
+	return sblist
 
 def groupfamily(famdict):
 	group = {}
@@ -223,12 +259,13 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-cardinal1.xlsx'
+filename = 'data-cardinal3.xlsx'
 numg = 6
 numf = 200
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numscore = 5
+numscore = 3
 minsize = 1
 numswaps = 1
-seatoffset = 7
-gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset)
+seatoffset = 6
+maxbsize = 3
+gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize)
