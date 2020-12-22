@@ -149,6 +149,6 @@ print((plist))
 
 
 ## Statistics
-filename = 'new-outputs-2000-families-6-games.xlsx'
+filename = 'outputs-' + '50' + '-families-' + str(numG) + '-games.xlsx'
 print(b)
 stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize, bundle2rank)
