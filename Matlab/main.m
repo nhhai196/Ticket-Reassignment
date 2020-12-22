@@ -8,8 +8,8 @@ mydir  = pwd;
 idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
 
-filename = strcat(newdir, '\data-swap-big.xlsx');
-[numf, numg, FP, S, SE, alpha, capacity] = getdata(filename);
+filename = strcat(newdir, '\data-cardinal2.xlsx');
+[numf, numg, FP, S, SE, alpha, capacity, BR] = getdata(filename);
 
 % Club Ranking: uniformly random
 clubrank = randperm(numf); % family: index - val : score
@@ -81,13 +81,22 @@ for i = 1:5
     prefppl(:, i) = countPrefPeople(currmatch, FP, S);
 end
 
+% Bundle rank
+[~, numb] = size(BR);
+brank = zeros(numf, 5);
+avg = zeros(1, 5);
+count = zeros(numb+1, 5);
 
-
+for i = 1:5
+    si = 1+(i-1)*numg;
+    ei = i * numg;
+    [brank(:, i), avg(1, i), count(:, i)] = bundlerank(matching(:, si:ei), BR, S, alpha);
+end
 
 %% Save to file
 
 % Export Statistics
-filename = strcat(newdir, '\new-outputs-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
+filename = strcat(newdir, '\outputs-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
 
 %t = xlsread(filename);
 %if ~isempty(t)
@@ -255,6 +264,28 @@ xlswrite(filename, {'Average matched rank'}, sheet, xlRange);
 
 xlRange = 'D36';
 xlswrite(filename, round(avg_matchedpref, 2), sheet, xlRange);
+
+% Bundle rank
+sheet = 5;
+xlRange = 'A1';
+xlswrite(filename, {'Num of families get i-th preferred bundle (decreasing order)'}, sheet, xlRange);
+
+xlRange = 'A2';
+xlswrite(filename, count, sheet, xlRange);
+
+sheet = 6;
+xlRange = 'A1';
+xlswrite(filename, {'Family bundle rank'}, sheet, xlRange);
+
+xlRange = 'A2';
+xlswrite(filename, brank, sheet, xlRange);
+
+sheet = 7;
+xlRange = 'A1';
+xlswrite(filename, {'Average bundle rank'}, sheet, xlRange);
+
+xlRange = 'A2';
+xlswrite(filename, avg, sheet, xlRange);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Preferences %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function count = countMatchedGames(match)

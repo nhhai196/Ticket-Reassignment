@@ -41,7 +41,7 @@ print("++++++++++++++++++++++++++++++++++++++ Data +++++++++++++++++++++++++++++
 
 print('numF = ' + str(numF))
 print('numG = ' + str(numG))
-#print('bundle2rank:\n' + str(bundle2rank))
+print('bundle2rank:\n' + str(bundle2rank))
 #print('bundlelist:\n' + str(bundlelist))
 #print('fb2col:\n' + str(fb2col))
 print('numcol = ' + str(numcol))
@@ -144,6 +144,6 @@ print("Rounding elapsed time = " + str(end - start))
 
 
 ## Statistics
-filename = 'new-outputs-2000-families-6-games.xlsx'
+filename = 'outputs-' + str(numf) + 'families-' + str(numg) + '-games.xlsx'
 print(b)
-stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize)
+stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize, bundle2rank)

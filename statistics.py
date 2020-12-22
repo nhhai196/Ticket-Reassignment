@@ -5,8 +5,9 @@ import datastructure as ds
 
 
 # 
-def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize):
+def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank):
 	print("+++++++++++++++++++++++++++++++++++ Statistics +++++++++++++++++++++++++++++++++++++")
+	print(FP)
 	
 	
 	nmf, nmp, bysize, fbyng, pbyng, fbypref, pbypref = stathelper(x, numf, numg, fb2col, FP, famsize)
@@ -22,6 +23,9 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize):
 	avgnmf = mean(nmf)
 	avgnmp = mean(nmp)
 	avgbysize = [0] * 5
+	
+	# bundle rank
+	brank, avg, count = matchbundlerank(x, numf, numg, fb2col, bundle2rank)
 	
 	# Violations
 	V, P = violations(A,x,b)
@@ -81,9 +85,19 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize):
 		wcell = ws.cell(28+i, 10)
 		wcell.value = pbypref[i]
 		
+	# Save bundlerank
+	ws=wb["Sheet5"]
+	numb = len(bundle2rank[0])
+	for i in range(numb+1):
+		wcell = ws.cell(7, 2+i)
+		wcell.value = count(i)
+		
+	ws=wb["Sheet7"]
+	wcell = ws.cell(7,2)
+	wcell.value = avg
+	
 	wb.save(filename)
 		
-	
 	return 
 
 	
@@ -163,3 +177,36 @@ def mean(x):
 # Multiply a matrix with a vector
 def mul(A, x):
 	return [ds.dotproduct(a,x) for a in A]
+	
+# Get bundle rank from the match
+def matchbundlerank(x, numf, numg, fb2col, bundlerank):
+	brank = [0] * numf 
+	numb = len(bundlerank[0])
+	count = [0] * (numb+1)
+	sum = 0
+	num = 0
+	
+	
+	for i in range(len(x)):
+		if x[i] >= 1:
+			(f, b) = ind2fb(i, fb2col, numf + numg)
+			
+			for key, value in bundlerank[f].items():
+				if key == b:
+					brank[f] = value
+					
+					# count the number of families get i-th bundle
+					count[value] += x[i]
+					
+					sum += value * x[i]
+					num += x[i]
+					
+	# count number of unmatched families				
+	count[numb] = numf - sum(count[0:numb])				
+					
+	# avgerage rank of matched families
+	avg = round(sum/num, 1)
+			
+	return brank, avg, count
+
+	
