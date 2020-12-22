@@ -1,15 +1,28 @@
 
-function [numf, numg, FP, S, SE, alpha, capacity] = getdata(filename)
+function [numf, numg, FP, S, SE, alpha, capacity, BR] = getdata(filename)
     M = xlsread(filename);
+    
     %display(M);
     
     [numf, n] = size(M);
     numg = n - 4;
     
+    % bundle rank
+    [~, ~, BR] = xlsread(filename);
+    [~, n] = size(BR);
+    BR = BR(2:numf+1, numg+6:n)
     
-    FP = M(:, 1:numg);
+    
+    [~, tFP] = sort(M(:, 1:numg), 2, 'descend');
+    FP = zeros(size(tFP));
+    for f = 1: numf
+        for g = 1:numg
+            FP(f, tFP(f, g)) = g;
+        end
+    end
     S = M(:, numg + 2);
     SE = M(:, numg+4);
+    
     
     sheet = 3;
     N = xlsread(filename, sheet);

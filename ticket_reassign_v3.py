@@ -145,10 +145,10 @@ print("Rounding elapsed time = " + str(end - start))
 
 
 #print(len(xBar))
-#print((plist))
+print((plist))
 
 
 ## Statistics
 filename = 'new-outputs-2000-families-6-games.xlsx'
 print(b)
-stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize)
+stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize, bundle2rank)
