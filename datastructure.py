@@ -404,16 +404,24 @@ def init_v3(filename,sbud,cap):
     bundlelist = [] #preference list over bundles, each family has one list
     sortedbundle = [] #bundle of interest in incearsing alphabetic order, each family has one
     fb2col = {} #map (family,bundle) to the column index of matrix A
-    pglist = [] #plist[f][j] denotes family f's j-th most favorite game
+    pglist = [] #plist[f][j] denotes family f's rank for game j
     blist = [] #blist[f-1] denotes the budget of family f
     famsize = [] #famsize[f] denotes the size of family f
     numcol = 0
     b = []
 
     for i in range(2,row_num+1): #family i-2
+        rank = []
         bundle2rank.append({})
         bundlelist.append([])
         unsortedlist = []
+        rank1 = []
+        for j in range(1,gnum+1):
+            rank.append([j,sheet.cell(row=i,column=j).value])
+        rank.sort(key = lambda x: x[1], reverse=True)
+        for j in range(1,gnum+1):
+            rank1.append(rank[j-1][0])
+        pglist.append(rank1)
         fsize = sheet.cell(row=i,column=gnum+2).value
         snum = sheet.cell(row=i,column=gnum+4).value
         gsize = sheet.cell(row=i,column=gnum+6).value
