@@ -29,6 +29,10 @@ import statistics as stat
 #ex: python ticket_reassign_v3.py data-cardinal3.xlsx 1.2 500 0.1 // 1800 rounds
 #ex: python ticket_reassign_v3.py data-cardinal3.xlsx 1.2 500 0.05 // > 200K rounds!
 
+#below: seatoffset = 6, numscore = 5, fewscores = 4
+#ex: python ticket_reassign_v3.py data-cardinal5.xlsx 1.2 500 0.05 // 3600 rounds
+#ex: python ticket_reassign_v3.py data-cardinal6.xlsx 1.2 500 0.04 // 7200 rounds, this one has max violation 24.6%, may want to check
+
 numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist, famsize = datastructure.init_v3(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])))
 #numF: number of family
 #numG: number of games
