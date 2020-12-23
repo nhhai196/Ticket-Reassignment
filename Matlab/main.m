@@ -8,7 +8,7 @@ mydir  = pwd;
 idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
 
-filename = strcat(newdir, '\data-cardinal2.xlsx');
+filename = strcat(newdir, '\data-cardinal4.xlsx');
 [numf, numg, FP, S, SE, alpha, capacity, BR] = getdata(filename);
 
 % Club Ranking: uniformly random
@@ -96,7 +96,7 @@ end
 %% Save to file
 
 % Export Statistics
-filename = strcat(newdir, '\outputs-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
+filename = strcat(newdir, '\outputs-card-4-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
 
 %t = xlsread(filename);
 %if ~isempty(t)

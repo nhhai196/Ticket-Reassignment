@@ -259,6 +259,7 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
+
 filename = 'data-cardinal6.xlsx'
 numg = 6
 numf = 200
