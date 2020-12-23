@@ -259,11 +259,11 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-cardinal3.xlsx'
+filename = 'data-cardinal4.xlsx'
 numg = 6
 numf = 200
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numscore = 3
+numscore = 5
 minsize = 1
 numswaps = 1
 seatoffset = 6

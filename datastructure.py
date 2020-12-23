@@ -428,7 +428,7 @@ def init_v3(filename,sbud,cap):
         b.append(gsize)
         famsize.append(fsize)
         item_count = 0
-        for j in range(gnum+8,col_num):
+        for j in range(gnum+8,col_num+1):
             item = sheet.cell(row=i,column=j).value
             intlist = [int(float(i)) for i in item.split(',')] #convert string to int
             unsortedlist.append(intlist)

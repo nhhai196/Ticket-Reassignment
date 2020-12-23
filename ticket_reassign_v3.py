@@ -46,7 +46,8 @@ print("++++++++++++++++++++++++++++++++++++++ Data +++++++++++++++++++++++++++++
 
 print('numF = ' + str(numF))
 print('numG = ' + str(numG))
-#print('bundle2rank:\n' + str(bundle2rank))
+print('bundle2rank:\n' + str(bundle2rank))
+print(len(bundle2rank[1]))
 #print('bundlelist:\n' + str(bundlelist))
 #print('fb2col:\n' + str(fb2col))
 print('numcol = ' + str(numcol))
@@ -149,6 +150,6 @@ print((plist))
 
 
 ## Statistics
-filename = 'outputs-' + '50' + '-families-' + str(numG) + '-games.xlsx'
+filename = 'outputs-card-4-' + '200' + '-families-' + str(numG) + '-games.xlsx'
 print(b)
 stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize, bundle2rank)
