@@ -33,7 +33,7 @@ import statistics as stat
 #ex: python ticket_reassign_v3.py data-cardinal5.xlsx 1.2 500 0.05 // 3600 rounds
 #ex: python ticket_reassign_v3.py data-cardinal6.xlsx 1.2 500 0.04 // 7200 rounds, this one has max violation 24.6%, may want to check
 
-numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist, famsize = datastructure.init_v3(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])))
+numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist, famsize, idtofam = datastructure.init_v3(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])))
 #numF: number of family
 #numG: number of games
 #bundle2rank: bundle maps to the rank, each family has one dictionary
@@ -45,6 +45,7 @@ numF, numG, bundle2rank, bundlelist, fb2col, budget, numcol, A, b, plist, famsiz
 #b: the capacity vector on RHS
 #plist: plist[f][j] denotes family f's j-th most favorite game
 #famsize: famsize[f] denotes the size of family f
+#id2fam: id2fam[i-1] returns a list of families with group id i
 
 print("++++++++++++++++++++++++++++++++++++++ Data +++++++++++++++++++++++++++++++++++++")
 

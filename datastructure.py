@@ -468,7 +468,13 @@ def init_v3(filename,sbud,cap):
                 game_count += 1
             col_count += 1
 
-    return fnum, gnum, bundle2rank, bundlelist, fb2col, blist, numcol, A, b, pglist, famsize
+    id2fam = [ [] for _ in range(row_num-1) ]
+    sheet = book.get_sheet_by_name("Sheet1")
+    fam_row_num = sheet.max_row
+    for j in range(2,fam_row_num+1):
+        id2fam[sheet.cell(row=j,column=gnum+6).value-1].append(int(float(j))-1)
+
+    return fnum, gnum, bundle2rank, bundlelist, fb2col, blist, numcol, A, b, pglist, famsize, id2fam
 
 #generate ordlist where ordlist[i] is the preference of row i over the column index w.r.t the C matrix (i is 0-based)
 def genordlist(A, numf, fp, bundlelist, fb2col):

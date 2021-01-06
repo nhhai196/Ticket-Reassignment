@@ -13,7 +13,9 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 #	print(scorelist)
 #	print(prefcdf)
 
-	famdict = genfam(numf, fdist, minsize, scorelist, prefcdf)
+	famdict, tupletoID = genfam(numf, fdist, minsize, scorelist, prefcdf)
+#	famdict[family][0]=size, famdict[family][1]=#seniors, famdict[family][2]=bundle preference
+#	tupletoID[tuple([family][i])]= family's ID
 	group = groupfamily(famdict)
 
 #	print(group)
@@ -25,7 +27,8 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 	wb.write(0, 0, 'Family Preference')
 	wb.write(0, numg + 1, 'Family Size')
 	wb.write(0, numg+ 3, 'Num Seniors')
-	wb.write(0, numg + 5, 'Family Bundle Preference')
+	wb.write(0, numg + 5, 'Group ID')
+	wb.write(0, numg + 7, 'Family Bundle Preference')
 
 	row = 1
 	for value in famdict.values():
@@ -38,10 +41,11 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 
 		wb.write(row, numg + 1, value[0])
 		wb.write(row, numg + 3, value[1])
+		wb.write(row, numg + 5, tupletoID[tuple(value)])
 
 		sblist = genblist(value, maxbsize, seatoffset)
 		for i in range(len(sblist)):
-			wb.write(row, numg + 5 + i, ",".join(map(str, sblist[i][1])))
+			wb.write(row, numg + 7 + i, ",".join(map(str, sblist[i][1])))
 
 		row += 1
 
@@ -141,9 +145,19 @@ def genfam(numf, dist, minsize, preflist, prefcdf):
 	#print ("famdict second = " + str(famdict))
 	famdict = genpref(famdict, preflist, prefcdf)
 	#print ("famdict third = " + str(famdict))
+	tupletoID = genID(famdict)
 
-	return famdict
+	return famdict, tupletoID
 
+def genID(famdict):
+	numf = len(famdict)
+	tupletoID = {}
+	ID = 1
+	for i in range(1, numf+1):
+		if tuple(famdict[i]) not in tupletoID:
+			tupletoID[tuple(famdict[i])] = ID
+			ID += 1
+	return tupletoID
 
 def gensenior(famdict):
 	numf = len(famdict)
@@ -161,7 +175,7 @@ def randomscore(numg):
 	return score
 
 def genscorelist(numscore, numg, numswaps):
-	fewscore = 5
+	fewscore = 6
 
 	smallslist = [randomscore(numg) for i in range(fewscore)]
 	scorelist = []
@@ -259,7 +273,7 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-cardinal6.xlsx'
+filename = 'data-cardinal-ID-1.xlsx'
 numg = 6
 numf = 200
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
