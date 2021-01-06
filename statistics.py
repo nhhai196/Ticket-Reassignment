@@ -88,12 +88,13 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 	# Save bundlerank
 	ws=wb["Sheet5"]
 	numb = len(bundle2rank[0])
+	print('numb = ' + str(numb))
 	for i in range(numb+1):
-		wcell = ws.cell(7, 2+i)
+		wcell = ws.cell(2+i, 7)
 		wcell.value = count[i]
 		
 	ws=wb["Sheet7"]
-	wcell = ws.cell(7,2)
+	wcell = ws.cell(2, 7)
 	wcell.value = avg
 	
 	wb.save(filename)
