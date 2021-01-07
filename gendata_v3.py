@@ -262,9 +262,9 @@ def distmul(dist, num):
 
 filename = 'data-cardinal6.xlsx'
 numg = 6
-numf = 200
+numf = 40
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numscore = 6
+numscore = 50
 minsize = 1
 numswaps = 1
 seatoffset = 6
