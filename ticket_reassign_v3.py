@@ -155,6 +155,6 @@ print((plist))
 
 
 ## Statistics
-filename = 'outputs-card-4-' + '200' + '-families-' + str(numG) + '-games.xlsx'
+filename = 'outputs-card5-' + '200' + '-families-' + str(numG) + '-games.xlsx'
 print(b)
 stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize, bundle2rank)

@@ -8,7 +8,7 @@ mydir  = pwd;
 idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
 
-filename = strcat(newdir, '\data-cardinal4.xlsx');
+filename = strcat(newdir, '\data-swap1.xlsx');
 [numf, numg, FP, S, SE, alpha, capacity, BR] = getdata(filename);
 
 % Club Ranking: uniformly random
@@ -96,7 +96,7 @@ end
 %% Save to file
 
 % Export Statistics
-filename = strcat(newdir, '\outputs-card-4-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
+filename = strcat(newdir, '\outputs-card5-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
 
 %t = xlsread(filename);
 %if ~isempty(t)
@@ -286,6 +286,12 @@ xlswrite(filename, {'Average bundle rank'}, sheet, xlRange);
 
 xlRange = 'A2';
 xlswrite(filename, avg, sheet, xlRange);
+
+xlRange = 'A4';
+xlswrite(filename, {'Standard Deviation'}, sheet, xlRange);
+
+xlRange = 'A5';
+xlswrite(filename, round(std(count),2), sheet, xlRange);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Preferences %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function count = countMatchedGames(match)

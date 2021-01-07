@@ -97,6 +97,9 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 	wcell = ws.cell(2, 7)
 	wcell.value = avg
 	
+	wcell = ws.cell(5, 7)
+	wcell.value = round(std(count),2)
+	
 	wb.save(filename)
 		
 	return 
@@ -203,7 +206,7 @@ def matchbundlerank(x, numf, numg, fb2col, bundlerank):
 					num += x[i]
 					
 	# count number of unmatched families				
-	count[numb] = numf - sum(count[0:numb])				
+	# count[numb] = numf - sum(count[0:numb])				
 					
 	# avgerage rank of matched families
 	avg = round(s/num, 1)
