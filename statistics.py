@@ -39,6 +39,11 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 	for i in range(5):
 		avgbysize[i] = mean(bysize[i])
 		
+	# Envy
+	envy = countenvy(brank, famsize)
+	print(envy)
+	print('Average envy = ' + str(sum(envy)/len(envy)))
+		
 	
 	# Save to a file 
 	wb=load_workbook(filename)
@@ -184,8 +189,8 @@ def mul(A, x):
 	
 # Get bundle rank from the match
 def matchbundlerank(x, numf, numg, fb2col, bundlerank):
-	brank = [0] * numf 
 	numb = len(bundlerank[0])
+	brank = [numb+1] * numf 
 	count = [0] * (numb+1)
 	s = 0
 	num = 0
@@ -212,5 +217,25 @@ def matchbundlerank(x, numf, numg, fb2col, bundlerank):
 	avg = round(s/num, 1)
 			
 	return brank, avg, count
+	
+## Count enviness
+def countenvy(brank, S):	
+	nF = len(S)
+	envy = [0] * nF
+	for f in range(nF):
+		maxdiff = 0
+		for h in range(nF):
+			if (f != h) and (S[f] == S[h]) and (brank[f] > brank[h]): # envy
+				currdiff = brank[f] - brank[h]
+				if maxdiff < currdiff:
+					maxdiff = currdiff
+		envy[f] = maxdiff
+		
+	return envy
+	
+			
+	
+
+	
 
 	

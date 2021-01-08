@@ -288,3 +288,35 @@ def roundint(x):
 	
 #print(subtract([1,2], [-1, -2]))		
 #print(roundup([0.1, 0, 0.2], 10**(-6)))
+
+### Redistribute evenly the group dominating solution to a family dominating solution 
+def redistribute(x, numcol2, IDlist, numf, numg, fb2col, fb2col2, numrow2):
+	newx = [0] * numcol2
+	for i in range(len(x)):
+		if x[i] > 0: 
+			(gID, b) = ind2fb(i, fb2col, numf + numg)
+			newx = redistributeone(x[i], gID, b, IDlist, newx, fb2col2, numrow2)
+
+	return newx
+
+def redistributeone(val, gID, b, IDlist, newx, fb2col2, numrow2):
+	groupsize = len(IDlist[gID]) # Check offset by 1 or not 
+	for f in IDlist[gID]:
+		col = fb2col2[(f-1, b)] - numrow2
+		print(col)
+		print(len(newx))
+		newx[col] = val/groupsize
+		
+	return newx
+	
+	
+def ind2fb(ind, fb2col, numrows):
+	#print('ind = ' + str(ind))
+	# offset by the number of rows 
+	for key, value in fb2col.items():
+		if value == (ind + numrows):
+			#print('key = '  + str(key))
+			return key
+			
+		
+		

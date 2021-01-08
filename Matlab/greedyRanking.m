@@ -13,7 +13,10 @@ function match = greedyRanking(proposers, clubscore, S, C, alpha)
         if (val == infinity)
             break;
         end
+        display(f)
+        display(S(f))
         temp = assignedseats + alpha(S(f));
+        
         if (temp <= C)
             clubscore(f) = infinity;
             match(f) = true;
