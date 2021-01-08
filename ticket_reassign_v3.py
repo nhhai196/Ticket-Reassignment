@@ -141,10 +141,24 @@ A = A[:, numrow:]
 #realb = ir.mul(A, x)
 #print(realb)
 
+numF2, numG2, bundle2rank2, bundlelist2, fb2col2, budget2, numcol2, A2, b2, plist2, famsize2, idtofam2 = datastructure.init_family(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])))
+
+print('fb2col2:\n' + str(fb2col2))
+numrow2 = numF2 + numG2
+print('numcol2 = ' + str(numcol2))
+A2 = A2[:, numrow2:]
+
+# Redistribute
+x2 = ir.redistribute(x, numcol2, idtofam2, numF, numG, fb2col, fb2col2, numrow2)
+print(x2)
+
+
+
 tol = 10**(-6)
 
-xBar = ir.iterativerounding(A, x, b, tol, numF, numG)
-print("xBar = " + str(xBar))
+#xBar = ir.iterativerounding(A, x, b, tol, numF, numG)
+xBar2 = ir.iterativerounding(A2, x2, b2, tol, numF2, numG2)
+print("xBar2 = " + str(xBar2))
 
 end = time.time()
 print("Rounding elapsed time = " + str(end - start))
@@ -155,6 +169,6 @@ print((plist))
 
 
 ## Statistics
-filename = 'outputs-card5-' + '200' + '-families-' + str(numG) + '-games.xlsx'
+filename = 'outputs-card-' + '100' + '-families-' + str(numG) + '-games.xlsx'
 print(b)
-stat.statistics(filename, A, xBar, b, numF, numG, fb2col, plist, famsize, bundle2rank)
+stat.statistics(filename, A2, xBar2, b2, numF2, numG2, fb2col2, plist2, famsize2, bundle2rank2)

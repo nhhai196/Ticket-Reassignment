@@ -8,7 +8,7 @@ mydir  = pwd;
 idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
 
-filename = strcat(newdir, '\data-swap1.xlsx');
+filename = strcat(newdir, '\data-cardinal-ID-medium.xlsx');
 [numf, numg, FP, S, SE, alpha, capacity, BR] = getdata(filename);
 
 % Club Ranking: uniformly random
@@ -93,10 +93,13 @@ for i = 1:5
     [brank(:, i), avg(1, i), count(:, i)] = bundlerank(matching(:, si:ei), BR, S, alpha);
 end
 
+envy = countenvy(brank, S);
+avgenvy = mean(envy); 
+
 %% Save to file
 
 % Export Statistics
-filename = strcat(newdir, '\outputs-card5-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
+filename = strcat(newdir, '\outputs-card-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
 
 %t = xlsread(filename);
 %if ~isempty(t)

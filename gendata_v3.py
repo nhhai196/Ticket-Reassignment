@@ -175,7 +175,7 @@ def randomscore(numg):
 	return score
 
 def genscorelist(numscore, numg, numswaps):
-	fewscore = 6
+	fewscore = 3
 
 	smallslist = [randomscore(numg) for i in range(fewscore)]
 	scorelist = []
@@ -245,7 +245,7 @@ def randompref(pcdf):
 def randomsenior(anum):
 	count = 0
 	for i in range(anum):
-		t = random.randint(1,4)
+		t = random.randint(2,4)
 		if t == 1:
 			count += 1
 
@@ -273,11 +273,11 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-cardinal-ID-1.xlsx'
+filename = 'data-cardinal-ID-medium.xlsx'
 numg = 6
-numf = 40
+numf = 100
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numscore = 50
+numscore = 5
 minsize = 1
 numswaps = 1
 seatoffset = 6
