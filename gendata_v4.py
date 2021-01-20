@@ -6,14 +6,16 @@ import copy
 import xlsxwriter
 
 
-def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize):
+def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize, prunetype, prunenum):
+#prunetype: 1: top, 2: random
+#prunenum: number of bundles pruned
 
 	numscore, scorelist = genscorelist(numscore, numg, numswaps)
 	prefcdf = genprefcdf(numscore)
 #	print(scorelist)
 #	print(prefcdf)
 
-	famdict, tupletoID = genfam(numf, fdist, minsize, scorelist, prefcdf)
+	famdict, tupletoID, IDtobundle = genfam(numf, fdist, minsize, scorelist, prefcdf, maxbsize, prunetype, prunenum, seatoffset)
 #	famdict[family][0]=size, famdict[family][1]=#seniors, famdict[family][2]=bundle preference
 #	tupletoID[tuple([family][i])]= family's ID
 	group = groupfamily(famdict)
@@ -43,9 +45,9 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 		wb.write(row, numg + 3, value[1])
 		wb.write(row, numg + 5, tupletoID[tuple(value)])
 
-		sblist = genblist(value, maxbsize, seatoffset)
-		for i in range(len(sblist)):
-			wb.write(row, numg + 7 + i, ",".join(map(str, sblist[i][1])))
+		for i in range(len(IDtobundle[tupletoID[tuple(value)]])):
+			sblist = IDtobundle[tupletoID[tuple(value)]][i]
+			wb.write(row, numg + 7 + i, ",".join(map(str, sblist[1])))
 
 		row += 1
 
@@ -64,9 +66,9 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 		wb.write(row, numg + 1, key[0])
 		wb.write(row, numg + 3, key[1])
 		wb.write(row, numg + 5, len(value))
-		sblist = genblist(key, maxbsize, seatoffset)
-		for i in range(len(sblist)):
-			wb.write(row, numg + 7 + i, ",".join(map(str, sblist[i][1])))
+		for i in range(len(IDtobundle[row])):
+			sblist = IDtobundle[row][i]
+			wb.write(row, numg + 7 + i, ",".join(map(str, sblist[1])))
 		row += 1
 
 	wb = workbook.add_worksheet()
@@ -114,6 +116,54 @@ def genblist(value, ub, extra):
 	sblist.sort(key = lambda x: x[0], reverse=True)
 	return sblist
 
+def genblist_v2(value, ub, extra, prunetype, prunenum, seatoffset):
+	n = len(value[2])
+	sblist = []
+	for i in range(2**n-1, 0, -1):
+		score = 0
+		bundle = [0]*n
+		bilist = [int(j) for j in list('{0:0b}'.format(i))]
+		if sum(bilist) <= ub:
+			bisize = len(bilist)
+			for j in range(0,n-bisize):
+				bilist.insert(0,0)
+			for j in range(0,n):
+				if bilist[j]==1:
+					bundle[j] = value[0] + extra
+					score = score + value[2][j]
+			sblist.append([score, bundle])
+	sblist.sort(key = lambda x: x[0], reverse=True)
+	if prunetype==1:
+		bundle = 0
+		numpruned = 0
+		while numpruned < prunenum:
+			numpos = 0
+			for item in range(len(sblist[bundle][1])):
+				if sblist[bundle][1][item] > 0:
+					numpos += 1
+			if numpos == ub:
+				del sblist[bundle]
+				numpruned += 1
+				continue
+			bundle += 1
+	if prunetype==2:
+		bundle = 0
+		numpruned = 0
+		maxblist = []
+		for bundle in range(len(sblist)):
+			numpos = 0
+			for item in range(len(sblist[bundle][1])):
+				if sblist[bundle][1][item] > 0:
+					numpos += 1
+			if numpos == ub:
+				maxblist.append(bundle)
+		maxblist = np.random.permutation(maxblist)
+		maxblist = sorted(maxblist[0:prunenum])
+		for bundle in maxblist:
+			del sblist[bundle-numpruned]
+			numpruned += 1
+	return sblist
+
 def groupfamily(famdict):
 	group = {}
 
@@ -126,7 +176,14 @@ def groupfamily(famdict):
 
 	return group
 
-def genfam(numf, dist, minsize, preflist, prefcdf):
+def genbundle(tupletoID, maxbsize, prunetype, prunenum, seatoffset):
+	IDtobundle = {}
+	for key, value in tupletoID.items():
+		sblist = genblist_v2(key, maxbsize, seatoffset, prunetype, prunenum, seatoffset)
+		IDtobundle[value] = sblist
+	return IDtobundle
+
+def genfam(numf, dist, minsize, preflist, prefcdf, maxbsize, prunetype, prunenum, seatoffset):
 	famdict = {}
 	fdist = distmul(dist, numf)
 
@@ -147,7 +204,9 @@ def genfam(numf, dist, minsize, preflist, prefcdf):
 	#print ("famdict third = " + str(famdict))
 	tupletoID = genID(famdict)
 
-	return famdict, tupletoID
+	IDtobundle = genbundle(tupletoID, maxbsize, prunetype, prunenum, seatoffset)
+
+	return famdict, tupletoID, IDtobundle
 
 def genID(famdict):
 	numf = len(famdict)
@@ -273,16 +332,15 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-
-filename = 'data-cardinal-ID-1000-swap-2.xlsx'
+filename = 'data-cardinal-ID-200-prune-rand.xlsx'
 numg = 6
-numf = 1000
+numf = 200
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
 numscore = 20
 minsize = 1
 numswaps = 2
 seatoffset = 6
-maxbsize = 2
-
-filename = 'data-cardinal-ID-' + str(numswaps) + '-swaps-' + str(numf) + '-families.xlsx'
-gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize)
+maxbsize = 3
+prunetype = 2
+prunenum = 15
+gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize, prunetype, prunenum)
