@@ -332,9 +332,9 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-cardinal-ID-200-prune-rand.xlsx'
+filename = 'data-cardinal-ID-400-prune-rand.xlsx'
 numg = 6
-numf = 200
+numf = 400
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
 numscore = 20
 minsize = 1
