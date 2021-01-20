@@ -175,7 +175,7 @@ def randomscore(numg):
 	return score
 
 def genscorelist(numscore, numg, numswaps):
-	fewscore = 3
+	fewscore = 5
 
 	smallslist = [randomscore(numg) for i in range(fewscore)]
 	scorelist = []
@@ -273,13 +273,16 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-cardinal-ID-medium.xlsx'
+
 numg = 6
-numf = 100
+numf =  400
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numscore = 5
+numscore = 20
 minsize = 1
 numswaps = 1
 seatoffset = 6
-maxbsize = 3
+maxbsize = 2
+
+filename = 'data-cardinal-ID-' + str(numswaps) + '-swaps-' + str(numf) + '-families.xlsx'
+
 gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize)

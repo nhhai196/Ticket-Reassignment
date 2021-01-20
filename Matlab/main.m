@@ -8,7 +8,7 @@ mydir  = pwd;
 idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
 
-filename = strcat(newdir, '\data-cardinal-ID-medium.xlsx');
+filename = strcat(newdir, '\data-cardinal-ID-1-swaps-400-families.xlsx');
 [numf, numg, FP, S, SE, alpha, capacity, BR] = getdata(filename);
 
 % Club Ranking: uniformly random
@@ -93,13 +93,23 @@ for i = 1:5
     [brank(:, i), avg(1, i), count(:, i)] = bundlerank(matching(:, si:ei), BR, S, alpha);
 end
 
-envy = countenvy(brank, S);
-avgenvy = mean(envy); 
+envy = zeros(numf, 5);
+numenvy = zeros(numf, 5);
+wenvy = zeros(numf,5);
+avgenvy = zeros(1,5);
+avgnumenvy = zeros(1,5);
+avgwenvy = zeros(1,5);
 
+for i = 1:5
+    [envy(:, i), numenvy(:,i), wenvy(:, i)] = countenvy(brank(:,i), S);
+    avgenvy(i) = mean(envy(:,i)); 
+    avgnumenvy(i) = mean(numenvy(:,i));
+    avgwenvy(i) = mean(wenvy(:, i));
+end
 %% Save to file
 
 % Export Statistics
-filename = strcat(newdir, '\outputs-card-',int2str(numf), '-families-', int2str(numg), '-games.xlsx');
+filename = strcat(newdir, '\outputs-card-',int2str(numf), '-families.xlsx');
 
 %t = xlsread(filename);
 %if ~isempty(t)
@@ -295,6 +305,27 @@ xlswrite(filename, {'Standard Deviation'}, sheet, xlRange);
 
 xlRange = 'A5';
 xlswrite(filename, round(std(count),2), sheet, xlRange);
+
+%% Envy
+sheet = 8;
+xlRange = 'A1';
+xlswrite(filename, {'Average max envy'}, sheet, xlRange);
+
+xlRange = 'A2';
+xlswrite(filename, round(avgenvy,2), sheet, xlRange);
+
+xlRange = 'A4';
+xlswrite(filename, {'Average number of envy'}, sheet, xlRange);
+
+xlRange = 'A5';
+xlswrite(filename, round(avgnumenvy,2), sheet, xlRange);
+
+xlRange = 'A7';
+xlswrite(filename, {'Average weighted envy'}, sheet, xlRange);
+
+xlRange = 'A8';
+xlswrite(filename, round(avgwenvy,2), sheet, xlRange);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Preferences %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function count = countMatchedGames(match)
