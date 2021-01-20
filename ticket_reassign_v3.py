@@ -169,6 +169,6 @@ print((plist))
 
 
 ## Statistics
-filename = 'outputs-card-' + str(numF2) + '-families.xlsx'
+filename = 'outputs-card-' + str(numF2) + '-families-prune-top.xlsx'
 print(b)
 stat.statistics(filename, A2, xBar2, b2, numF2, numG2, fb2col2, plist2, famsize2, bundle2rank2)
