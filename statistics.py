@@ -40,10 +40,17 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 		avgbysize[i] = mean(bysize[i])
 		
 	# Envy
-	envy = countenvy(brank, famsize)
+	envy, numenvy, wenvy = countenvy(brank, famsize)
 	print(envy)
-	print('Average envy = ' + str(sum(envy)/len(envy)))
-		
+	print(numenvy)
+	
+	avgenvy = sum(envy)/len(envy)
+	avgnumenvy = sum(numenvy)/len(numenvy)
+	avgwenvy = sum(wenvy)/len(wenvy)
+	
+	print('Average envy = ' + str(avgenvy))
+	print('Average number of envy families = ' + str(avgnumenvy))
+	print('Average weighted envy = ' + str(avgwenvy))
 	
 	# Save to a file 
 	wb=load_workbook(filename)
@@ -104,6 +111,17 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 	
 	wcell = ws.cell(5, 7)
 	wcell.value = round(std(count),2)
+	
+	# Save envy
+	ws=wb["Sheet8"]
+	wcell = ws.cell(2, 7)
+	wcell.value = avgenvy
+	
+	wcell = ws.cell(5, 7)
+	wcell.value = avgnumenvy
+	
+	wcell = ws.cell(8, 7)
+	wcell.value = avgwenvy
 	
 	wb.save(filename)
 		
@@ -222,16 +240,30 @@ def matchbundlerank(x, numf, numg, fb2col, bundlerank):
 def countenvy(brank, S):	
 	nF = len(S)
 	envy = [0] * nF
+	numenvy = [0] * nF
+	wenvy = [0] * nF
+	
 	for f in range(nF):
+		sum = 0
+		count = 0
 		maxdiff = 0
 		for h in range(nF):
+			
 			if (f != h) and (S[f] == S[h]) and (brank[f] > brank[h]): # envy
 				currdiff = brank[f] - brank[h]
+				sum += currdiff
+				
+				numenvy[f] = numenvy[f]+1
+				
 				if maxdiff < currdiff:
 					maxdiff = currdiff
+			if (S[f] == S[h]):
+				count += 1
 		envy[f] = maxdiff
+		if count > 1:
+			wenvy[f] = sum/(count -1)
 		
-	return envy
+	return envy, numenvy, wenvy
 	
 			
 	

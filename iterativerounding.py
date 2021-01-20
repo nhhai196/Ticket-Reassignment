@@ -3,6 +3,7 @@ import datastructure as ds
 import numpy as np
 import math
 import copy
+import threading
 
 # A : the constraint matrix
 # v: the objective coefficients
@@ -35,7 +36,9 @@ def iterativerounding(A, x, b, tol, numf, numg):
 	round = 1
 	elim = 0;
 	while True:
-		#print("++++++++++++ Round = " + str(round))
+		print("++++++++++++ Round = " + str(round))
+		#t = printint()
+		
 		round += 1
 
 		iind, xint, find, xfrac = seperateintfrac(x, tol)
@@ -43,6 +46,8 @@ def iterativerounding(A, x, b, tol, numf, numg):
 
 		if not find:				# integer solution
 			#print("Integral sol")
+			#stop_threads = True
+			#t.cancel()
 			break
 
 		if 	len(x) == len(xfrac):	# no integral entry
@@ -135,6 +140,12 @@ def iterativerounding(A, x, b, tol, numf, numg):
 
 	print("eliminated " + str(elim) + " constraints")
 	return roundint(xBar)
+	
+# Print some statement
+def printint():
+	t = threading.Timer(5.0, printint).start()
+	print('IR: running')
+	return t
 
 # Takes a solution x, and returns list of indicies i suct that x[i] is integal
 def seperateintfrac(x, tol):
@@ -303,8 +314,9 @@ def redistributeone(val, gID, b, IDlist, newx, fb2col2, numrow2):
 	groupsize = len(IDlist[gID]) # Check offset by 1 or not
 	for f in IDlist[gID]:
 		col = fb2col2[(f-1, b)] - numrow2
-#		print(col)
-#		print(len(newx))
+		#print(col)
+		#print(len(newx))
+
 		newx[col] = val/groupsize
 
 	return newx
