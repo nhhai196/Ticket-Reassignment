@@ -143,7 +143,7 @@ A = A[:, numrow:]
 
 numF2, numG2, bundle2rank2, bundlelist2, fb2col2, budget2, numcol2, A2, b2, plist2, famsize2, idtofam2 = datastructure.init_family(sys.argv[1],float(sys.argv[2]),int(float(sys.argv[3])))
 
-print('fb2col2:\n' + str(fb2col2))
+#print('fb2col2:\n' + str(fb2col2))
 numrow2 = numF2 + numG2
 print('numcol2 = ' + str(numcol2))
 A2 = A2[:, numrow2:]
@@ -169,6 +169,6 @@ print((plist))
 
 
 ## Statistics
-filename = 'outputs-card-' + '100' + '-families-' + str(numG) + '-games.xlsx'
+filename = 'outputs-card-' + str(numF2) + '-families.xlsx'
 print(b)
 stat.statistics(filename, A2, xBar2, b2, numF2, numG2, fb2col2, plist2, famsize2, bundle2rank2)
