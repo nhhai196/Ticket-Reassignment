@@ -332,15 +332,15 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-cardinal-ID-400-prune-top.xlsx'
+filename = 'data-cardinal-ID-10000-prune-rand.xlsx'
 numg = 6
-numf = 400
+numf = 10000
 fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
 numscore = 20
 minsize = 1
 numswaps = 2
 seatoffset = 6
 maxbsize = 3
-prunetype = 1
+prunetype = 2
 prunenum = 15
 gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize, prunetype, prunenum)
