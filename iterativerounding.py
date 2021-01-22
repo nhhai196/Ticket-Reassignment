@@ -119,13 +119,13 @@ def iterativerounding(A, x, b, tol, numf, numg):
 			#print("This case")
 			x = [0] * len(xremainind)
 		elif not A_eq and not b_eq:
-			res = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=None, b_eq=None, method='simplex')
+			res = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=None, b_eq=None, method='revised simplex')
 			x = res['x']
 		elif not A_ineq and not b_ineq:
-			res = linprog(v, A_ub=None, b_ub=None, A_eq=A_eq, b_eq=b_eq, method='simplex')
+			res = linprog(v, A_ub=None, b_ub=None, A_eq=A_eq, b_eq=b_eq, method='revised simplex')
 			x = res['x']
 		else:
-			res = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=A_eq, b_eq=b_eq, method='simplex')
+			res = linprog(v, A_ub=A_ineq, b_ub=b_ineq, A_eq=A_eq, b_eq=b_eq, method='revised simplex')
 			x = res['x']
 
 
