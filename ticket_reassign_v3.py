@@ -148,6 +148,8 @@ numrow2 = numF2 + numG2
 print('numcol2 = ' + str(numcol2))
 A2 = A2[:, numrow2:]
 
+print('id2fam ='  + str(idtofam2))
+
 # Redistribute
 x2 = ir.redistribute(x, numcol2, idtofam2, numF, numG, fb2col, fb2col2, numrow2)
 print(x2)
@@ -169,6 +171,7 @@ print((plist))
 
 
 ## Statistics
-filename = 'outputs-card-' + str(numF2) + '-families-prune-rand-revised.xlsx'
+filename = 'outputs-' + str(numF2) + '-families-prune-top-15-swap-2-offset-4-score-40-bf2-v-1.xlsx'
 print(b)
 stat.statistics(filename, A2, xBar2, b2, numF2, numG2, fb2col2, plist2, famsize2, bundle2rank2)
+#print(bundle2rank2)

@@ -2,6 +2,7 @@ from openpyxl import *
 import copy
 from numpy import * 
 import datastructure as ds
+import numpy as np
 
 
 # 
@@ -25,7 +26,11 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 	avgbysize = [0] * 5
 	
 	# bundle rank
-	brank, avg, count = matchbundlerank(x, numf, numg, fb2col, bundle2rank)
+	brank, bwrank, avg, avgwrank, count, countbyp, match = matchbundlerank(x, numf, numg, fb2col, bundle2rank, famsize)
+	print('brank =' + str(brank))
+	print('count =' + str(count))
+	print(match)
+	rbysize = rankbysize(brank, famsize) 
 	
 	# Violations
 	V, P = violations(A,x,b)
@@ -41,19 +46,33 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 		
 	# Envy
 	envy, numenvy, wenvy = countenvy(brank, famsize)
-	print(envy)
+	print('envy =' + str(envy))
 	print(numenvy)
+	print('wenvy = ' + str(wenvy))
+	
+	aenvybysize, anumenvybysize, awenvybysize = countenvybysize(envy, numenvy, wenvy, famsize)
 	
 	avgenvy = sum(envy)/len(envy)
 	avgnumenvy = sum(numenvy)/len(numenvy)
 	avgwenvy = sum(wenvy)/len(wenvy)
 	
+	print('aenvybysize = ' + str(aenvybysize))
+	
 	print('Average envy = ' + str(avgenvy))
 	print('Average number of envy families = ' + str(avgnumenvy))
 	print('Average weighted envy = ' + str(avgwenvy))
 	
-	# Save to a file 
+	## Save to a file 
 	wb=load_workbook(filename)
+	
+	# save the matching 
+	ws=wb["Sheet1"]
+	for i in range(numf):
+		for j in range(numg):
+			wcell = ws.cell(3+i, 39+j)
+			wcell.value = round(match[i,j])
+	
+	
 	ws=wb["Sheet3"]
 	
 	for i in range(numg):
@@ -105,12 +124,31 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 		wcell = ws.cell(2+i, 7)
 		wcell.value = count[i]
 		
+	for i in range(numb+1):
+		wcell = ws.cell(2+i, 16)
+		wcell.value = countbyp[i]
+		
+	ws = wb["Sheet6"]
+	for i in range(numf):
+		wcell = ws.cell(2+i, 7)
+		wcell.value = brank[i]
+		
 	ws=wb["Sheet7"]
 	wcell = ws.cell(2, 7)
 	wcell.value = avg
 	
 	wcell = ws.cell(5, 7)
-	wcell.value = round(std(count),2)
+	wcell.value = round(std(brank),2)
+	
+	wcell = ws.cell(8, 7)
+	wcell.value = avgwrank
+	
+	wcell = ws.cell(11, 7)
+	wcell.value = round(std(bwrank),2)
+	
+	for i in range(5):
+		wcell = ws.cell(14+i, 7)
+		wcell.value = round(rbysize[i],2)
 	
 	# Save envy
 	ws=wb["Sheet8"]
@@ -122,6 +160,21 @@ def statistics(filename, A, x, b,  numf, numg, fb2col, FP, famsize, bundle2rank)
 	
 	wcell = ws.cell(8, 7)
 	wcell.value = avgwenvy
+	
+	
+	for i in range(5):
+		wcell = ws.cell(11+i, 7)
+		wcell.value = round(aenvybysize[i],2)
+
+	for i in range(5):
+		wcell = ws.cell(11+i, 15)
+		wcell.value = round(anumenvybysize[i],2)	
+		
+	for i in range(5):
+		wcell = ws.cell(11+i, 23)
+		wcell.value = round(awenvybysize[i],2)
+	
+	
 	
 	wb.save(filename)
 		
@@ -206,26 +259,38 @@ def mul(A, x):
 	return [ds.dotproduct(a,x) for a in A]
 	
 # Get bundle rank from the match
-def matchbundlerank(x, numf, numg, fb2col, bundlerank):
+def matchbundlerank(x, numf, numg, fb2col, bundlerank, famsize):
 	numb = len(bundlerank[0])
 	brank = [numb+1] * numf 
+	bwrank = [numb+1] * sum(famsize)
 	count = [0] * (numb+1)
+	countbyp = [0] *(numb+1)
 	s = 0
+	sbysize = 0
 	num = 0
-	
+	match = np.zeros((numf, numg))
+	ind = 0
 	
 	for i in range(len(x)):
-		if x[i] >= 1:
+		if x[i] >= 1- 10**(-6):
+			print(x[i])
 			(f, b) = ind2fb(i, fb2col, numf + numg)
 			
 			for key, value in bundlerank[f].items():
 				if key == b:
-					brank[f] = value
+					brank[f] = value + 1 # offset by 1 
+					match[f, :] = list(b)
 					
-					# count the number of families get i-th bundle
+					for j in range(famsize[f]):
+						bwrank[ind] = brank[f]
+						ind += 1
+					
+					# count the number of families/people get i-th bundle
 					count[value] += x[i]
+					countbyp[value] += x[i] * famsize[f]
 					
-					s += value * x[i]
+					s += (value + 1) * x[i]
+					sbysize += (value + 1) * x[i] * famsize[f]
 					num += x[i]
 					
 	# count number of unmatched families				
@@ -233,8 +298,10 @@ def matchbundlerank(x, numf, numg, fb2col, bundlerank):
 					
 	# avgerage rank of matched families
 	avg = round(s/num, 1)
+	
+	avgbysize = round(sbysize/sum(famsize))
 			
-	return brank, avg, count
+	return brank, bwrank, avg, avgbysize, count, countbyp, match
 	
 ## Count enviness
 def countenvy(brank, S):	
@@ -265,8 +332,69 @@ def countenvy(brank, S):
 		
 	return envy, numenvy, wenvy
 	
-			
+def rankbysize(brank, S):
+	nF = len(S)
+	numfbysize = [0] * 5
+	for f in range(nF):
+		numfbysize[S[f]-1] += 1
+		
+	count = [0] * 5
+	stari = 0
 	
+	for i in range(5):
+		endi = stari + numfbysize[i]
+		count[i] = average(brank[stari:endi])
+		#print('here')
+		#print(count[i])
+		#print('sub envy = ' + envy )
+		stari = endi
+		
+	return count
+
+
+	
+def countenvybysizehelper(envy, numfbysize):
+	count = [0] * 5
+	stari = 0
+	
+	for i in range(5):
+		endi = stari + numfbysize[i]
+		count[i] = average(envy[stari:endi])
+		#print('here')
+		#print(count[i])
+		#print('sub envy = ' + envy )
+		stari = endi
+		
+	return count
+
+
+def countenvybysize(envy, numenvy, wenvy, S):
+	nF = len(S)
+	numfbysize = [0] * 5
+	for f in range(nF):
+		numfbysize[S[f]-1] += 1
+	
+	#print('numfbysize =' + str(numfbysize))
+		
+	aenvybysize = countenvybysizehelper(envy, numfbysize)
+	anumenvybysize = countenvybysizehelper(numenvy, numfbysize)
+	awenvybysize = countenvybysizehelper(wenvy, numfbysize)
+	
+	return aenvybysize, anumenvybysize, awenvybysize
+		
+# compute average (mean) of a list of numbers		
+def average(alist):
+	l = len(alist)
+	ans = 0
+	if l > 0:
+		ans = sum(alist)/l
+		
+	return ans
+		
+	
+		
+	
+
 
 	
 

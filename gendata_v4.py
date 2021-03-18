@@ -74,9 +74,9 @@ def gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset
 	wb = workbook.add_worksheet()
 	wb.write(0, 0, 'Capacity')
 	wb.write(0, 1, 'Alpha')
-	wb.write(1, 0, round(numf * 2.5))	# Hardcode here for capacity
+	wb.write(1, 0, round(numf * 2.65))	# Hardcode here for capacity
 	for i in range(len(fdist)):
-		wb.write(1, i+1, i+1+seatoffset)
+		wb.write(1, i+1, 2*(i+1)+seatoffset)
 
 #	wb = workbook.add_worksheet()
 #	wb.write(0, 0, 'Family Preference')
@@ -129,7 +129,7 @@ def genblist_v2(value, ub, extra, prunetype, prunenum, seatoffset):
 				bilist.insert(0,0)
 			for j in range(0,n):
 				if bilist[j]==1:
-					bundle[j] = value[0] + extra
+					bundle[j] = 2* value[0] + extra
 					score = score + value[2][j]
 			sblist.append([score, bundle])
 	sblist.sort(key = lambda x: x[0], reverse=True)
@@ -162,6 +162,8 @@ def genblist_v2(value, ub, extra, prunetype, prunenum, seatoffset):
 		for bundle in maxblist:
 			del sblist[bundle-numpruned]
 			numpruned += 1
+	
+	#print(sblist)
 	return sblist
 
 def groupfamily(famdict):
@@ -332,15 +334,17 @@ def distmul(dist, num):
 #minsize = 2
 #numswaps = 1
 ################# Testing
-filename = 'data-cardinal-ID-1000-prune-top-5.xlsx'
+
+version = 1
 numg = 6
 numf = 1000
-fdist = [0.15, 0.35, 0.3, 0.15, 0.05]
-numscore = 20
+fdist = [0.15, 0.35, 0.3, 0.1, 0.1]
+numscore = 40
 minsize = 1
 numswaps = 2
-seatoffset = 6
+seatoffset = 4
 maxbsize = 3
 prunetype = 1
-prunenum = 5
+prunenum = 15
+filename = 'data-' + str(numf) +'-prune-top-' + str(prunenum) + '-swap-' + str(numswaps) + '-offset-' + str(seatoffset) +'-score-' + str(numscore) + '-v-' + str(version) + '.xlsx'
 gendata(filename, numg, numf, fdist, numscore, minsize, numswaps, seatoffset, maxbsize, prunetype, prunenum)

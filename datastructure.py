@@ -240,7 +240,7 @@ def init(str):
                 item_count = 0
                 for item in row:
                     if item_count == 0:
-                        budget[line_count-1] = float(item) #budget[f-1] denotes the budget of family f
+                        budget[line_count-1] = float(item)/(2 * (float(item) + 3)) #budget[f-1] denotes the budget of family f
                         item_count = 1
                         bundle2rank.append({})
                         bundlelist.append([])
@@ -436,7 +436,10 @@ def init_v3(filename,sbud,cap):
             bundle2rank[i-2][inttuple] = item_count #bundle2rank[f-1] maps from a tuple bundle to rank for family f
             bundlelist[i-2].append(inttuple)
             item_count += 1
-        blist.append(fsize-snum + snum*sbud)
+        #blist.append((fsize-snum + snum*sbud)/(2 * (fsize + 3)))
+        #blist.append(fsize * fsize /(2 * (fsize + 3)))
+        #blist.append(fsize * (2 *(fsize +3)))
+        blist.append(fsize * fsize)
         unsortedlist.sort()
         sortedbundle.append(unsortedlist)
         for item in unsortedlist:

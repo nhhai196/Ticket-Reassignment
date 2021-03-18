@@ -8,11 +8,12 @@ mydir  = pwd;
 idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
 
-filename = strcat(newdir, '\data-cardinal-ID-1000-prune-rand.xlsx');
+filename = strcat(newdir, '\data-1000-prune-top-15-swap-2-offset-4-score-40-v-2.xlsx');
 [numf, numg, FP, S, SE, alpha, capacity, BR] = getdata(filename);
 
 % Club Ranking: uniformly random
-clubrank = randperm(numf); % family: index - val : score
+%clubrank = randperm(numf); % family: index - val : score
+clubrank = xlsread('Matlab/clubrank.xlsx');
 
 % Generate ranking based on size first then club rank
 scrank = genSizePointRank(clubrank, S, numf);
@@ -84,13 +85,18 @@ end
 % Bundle rank
 [~, numb] = size(BR);
 brank = zeros(numf, 5);
+bwrank = zeros(sum(S), 5);
 avg = zeros(1, 5);
+avgwrank = zeros(1,5);
 count = zeros(numb+1, 5);
+countbyp = zeros(numb+1, 5);
+rbysize = zeros(5,5);
 
 for i = 1:5
     si = 1+(i-1)*numg;
     ei = i * numg;
-    [brank(:, i), avg(1, i), count(:, i)] = bundlerank(matching(:, si:ei), BR, S, alpha);
+    [brank(:, i), bwrank(:, i), avg(i), avgwrank(i), count(:, i), countbyp(:,i)] = bundlerank(matching(:, si:ei), BR, S, alpha);
+    rbysize(:, i) = rankbysize(brank(:,i), S);
 end
 
 envy = zeros(numf, 5);
@@ -100,16 +106,21 @@ avgenvy = zeros(1,5);
 avgnumenvy = zeros(1,5);
 avgwenvy = zeros(1,5);
 
+aenvybysize = zeros(5,5);
+anumenvybysize = zeros(5,5);
+awenvybysize = zeros(5,5);
+
 for i = 1:5
     [envy(:, i), numenvy(:,i), wenvy(:, i)] = countenvy(brank(:,i), S);
     avgenvy(i) = mean(envy(:,i)); 
     avgnumenvy(i) = mean(numenvy(:,i));
     avgwenvy(i) = mean(wenvy(:, i));
+    [aenvybysize(:, i), anumenvybysize(:, i), awenvybysize(:,i)] = countenvybysize(envy(:, i), numenvy(:, i), wenvy(:,i), S);
 end
 %% Save to file
 
 % Export Statistics
-filename = strcat(newdir, '\outputs-card-',int2str(numf), '-families-prune-rand.xlsx');
+filename = strcat(newdir, '\outputs-',int2str(numf), '-families-prune-top-15-swap-2-offset-4-score-40-bf-v-2.xlsx');
 
 %t = xlsread(filename);
 %if ~isempty(t)
@@ -286,6 +297,12 @@ xlswrite(filename, {'Num of families get i-th preferred bundle (decreasing order
 xlRange = 'A2';
 xlswrite(filename, count, sheet, xlRange);
 
+xlRange = 'J1';
+xlswrite(filename, {'Num of people get i-th preferred bundle (decreasing order)'}, sheet, xlRange);
+
+xlRange = 'J2';
+xlswrite(filename, countbyp, sheet, xlRange);
+
 sheet = 6;
 xlRange = 'A1';
 xlswrite(filename, {'Family bundle rank'}, sheet, xlRange);
@@ -304,7 +321,27 @@ xlRange = 'A4';
 xlswrite(filename, {'Standard Deviation'}, sheet, xlRange);
 
 xlRange = 'A5';
-xlswrite(filename, round(std(count),2), sheet, xlRange);
+xlswrite(filename, round(std(brank),2), sheet, xlRange);
+
+xlRange = 'A7';
+xlswrite(filename, {'Average weighted bundle rank'}, sheet, xlRange);
+
+xlRange = 'A8';
+xlswrite(filename, round(avgwrank, 2), sheet, xlRange);
+
+xlRange = 'A10';
+xlswrite(filename, {'Standard Deviation'}, sheet, xlRange);
+
+xlRange = 'A11';
+xlswrite(filename, round(std(bwrank),2), sheet, xlRange);
+
+xlRange = 'A13';
+xlswrite(filename, {'Average bundle rank by size'}, sheet, xlRange);
+
+xlRange = 'A14';
+xlswrite(filename, round(rbysize,2), sheet, xlRange);
+
+
 
 %% Envy
 sheet = 8;
@@ -325,6 +362,35 @@ xlswrite(filename, {'Average weighted envy'}, sheet, xlRange);
 
 xlRange = 'A8';
 xlswrite(filename, round(avgwenvy,2), sheet, xlRange);
+
+xlRange = 'A10';
+xlswrite(filename, {'Average max envy by size'}, sheet, xlRange);
+% xlRange = 'A11';
+% xlswrite(filename, {'size 1'}, sheet, xlRange);
+% xlRange = 'A12';
+% xlswrite(filename, {'size 2'}, sheet, xlRange);
+% xlRange = 'A13';
+% xlswrite(filename, {'size 3'}, sheet, xlRange);
+% xlRange = 'A14';
+% xlswrite(filename, {'size 4'}, sheet, xlRange);
+% xlRange = 'A15';
+% xlswrite(filename, {'size 5'}, sheet, xlRange);
+
+xlRange = 'A11';
+xlswrite(filename, round(aenvybysize, 2), sheet, xlRange);
+
+
+xlRange = 'I10';
+xlswrite(filename, {'Average number of envy by size'}, sheet, xlRange);
+
+xlRange = 'I11';
+xlswrite(filename, round(anumenvybysize, 2), sheet, xlRange);
+
+xlRange = 'Q10';
+xlswrite(filename, {'Average number of envy by size'}, sheet, xlRange);
+
+xlRange = 'Q11';
+xlswrite(filename, round(awenvybysize, 2), sheet, xlRange);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Preferences %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -467,7 +533,7 @@ while true
         end
         
         % Update Club Score
-        %[clubrank, scrank] = updateClubRank(clubrank, matchrank, S, numf, numg);
+        [clubrank, scrank] = updateClubRank(clubrank, matchrank, S, numf, numg);
         
         round = round + 1;
     end
