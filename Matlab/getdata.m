@@ -10,7 +10,7 @@ function [numf, numg, FP, S, SE, alpha, capacity, BR] = getdata(filename)
     % bundle rank
     [~, ~, BR] = xlsread(filename);
     [~, n] = size(BR);
-    BR = BR(2:numf+1, numg+6:n);
+    BR = BR(2:numf+1, numg+8:n);
     
     
     [~, tFP] = sort(M(:, 1:numg), 2, 'descend');
